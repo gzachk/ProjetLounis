@@ -1,0 +1,105 @@
+@charset "UTF-8";
+
+
+
+#main_div {
+	
+	/*background-color: ghostwhite;*/
+	background-color: ghostwhite;
+/* 	background-color: snow; */
+	border-radius: 10px;
+	margin: 15px auto 15px auto;
+/* 	margin-top: 15px; */
+/* 	text-align: center; */
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	justify-content: center;
+	width: 900px;
+	box-shadow: 0px 2px 5px lightgrey;
+}
+
+#content_div {
+	margin: auto;
+	background-color: Lavender;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	width: 100%;
+}
+
+#header_div {
+	padding-left: 25px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#footer_div {
+	padding-left: 25px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+body {
+	/*background-color: gainsboro;*/
+	background-color: ghostwhite;
+	color: dimgrey;
+}
+
+hr {
+	border-color: lightgrey;
+}
+
+hr.separator {
+	width: 620px;
+}
+
+table.questionnaire {
+/* 	margin: 0px auto; */
+	width: 300px;
+}
+tbody.choixReponse {
+/* 	margin: 0px auto; */
+/*  	width: 300px;  */
+	text-align: left;
+}
+
+#listeStagiaire {
+/* 	border-collapse: collapse; */
+	display: inline-block;
+	border: 1px solid black;
+	margin: 15px;
+	width: auto;
+}
+#listeQuizz {
+/* 	border-collapse: collapse; */
+	display: inline-block;
+	border: 1px solid black;
+	margin: 15px;
+	width: auto;
+}
+thead {
+	text-align: center;
+}
+
+
+tr {
+	text-align: center;
+/* 	align-content: center; */
+}
+/* ------------------------------------------------------------- */
+.question_div {
+	background-color: ghostwhite;
+	border-radius: 10px;
+/* 	margin-top: 15px; */
+/* 	text-align: center; */
+	align-content: center;
+/* 	justify-content: center; */
+	width: 350px;
+	box-shadow: 0px 1px 2px lightgrey;
+}
+textarea {
+    min-width:450px;
+    min-height:200px;
+    max-width:450px;
+    max-height:200px;
+}
