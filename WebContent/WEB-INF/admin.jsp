@@ -124,7 +124,6 @@
 							</td>
 							<td>
 								<form action="admin" method="post">
-
 									<input type="submit" name="adminStg" value="Get All Users"
 										style="background-color: chartreuse" />
 								</form>

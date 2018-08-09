@@ -54,7 +54,8 @@ public class QuizzController extends HttpServlet {
 		}// for(i)
 	//	System.out.println(request.getParameter("reponseCoche2cdevfrvgrgt"));
 		
-
+		response.sendRedirect("parcours");
+		//request.getRequestDispatcher("WEB-INF/parcours.jsp").forward(request, response);
 		System.out.println("End Quizz(doPost) Controller\r");
 	}// doPost()
 
