@@ -506,4 +506,36 @@ public class ParcoursBDD {
 			jdbcDisconnect();
 			return quizzRecupere.getIdQuizz();
 		}// getIdQuizz();
+		
+// ----------------------------------------------------------------------------------
+
+	public boolean attribuerCompetence(int idCompetence, int idQuizz, int idUtilisateur) {
+		boolean statut = false;
+		String sql = "";
+
+		jdbcConnect();
+		// Insertion de la nouvelle competence
+
+		
+			try {
+				sql = "INSERT INTO PARCOURS (id_parcours, id_quizz, id_utilisateur)" + "VALUES (?,?,?)";
+
+				prepStmt = conn.prepareStatement(sql);
+
+				prepStmt.setInt(1, idCompetence);
+				prepStmt.setInt(2, idQuizz);
+				prepStmt.setInt(3, idUtilisateur);
+
+				prepStmt.executeUpdate();
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+		System.out.println("Deconnexion imminente....");
+		jdbcDisconnect();
+
+		return statut;
+	}// attribuerCompetencce()
+	
 }// - ParcoursBDD
