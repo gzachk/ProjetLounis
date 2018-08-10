@@ -190,7 +190,7 @@
 								<td>
 								<select style="width: 250px" size="3" required>
 										<option disabled="disabled" value=""> - Utilisateur(-trice) - </option>
-										<c:forEach items="${tableUser}" var="stgName">
+										<c:forEach items="${tableUserValid}" var="stgName">
 											<option value="${stgName.getIdUtilisateur()}">${stgName.getNom()} ${stgName.getPrenom()}</option>
 										</c:forEach>
 								</select> 
@@ -200,7 +200,7 @@
 								<td>
 								<select style="width: 250px" size="4" multiple required>
 										<option value="" disabled="disabled"> - Competence(s) - </option>
-										<c:forEach items="${tableQuizz}" var="competenceName">
+										<c:forEach items="${tableQuizzAttr}" var="competenceName">
 											<option value="${competenceName.getIdCompetence()}">${competenceName.getIdCompetence()}</option>
 										</c:forEach>
 								</select>

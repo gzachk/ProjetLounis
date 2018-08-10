@@ -32,19 +32,24 @@ public class AdminController extends HttpServlet {
 		HttpSession session= request.getSession();
 //		System.out.println(session.isNew());
 		
+		
+		//Verfification si utilisateur admin(if) ou pas(else) SI un utilisateur est connecte
 		if ((boolean) session.getAttribute("MySessionVariableAdmin")) {
+			//Recuperation liste des quizz(-s? -es?)
 			ParcoursBDD listParcoursBDD = new ParcoursBDD();
-			request.setAttribute("tableQuizz", listParcoursBDD.getAllQuizz());
+			request.setAttribute("tableQuizzAttr", listParcoursBDD.getAllQuizz());
 			
+			
+			//Recuperation liste utilisateurs valide non admin
 			UtilisateurBDDImpl listUtilisateurBDD = new UtilisateurBDD();
 			ArrayList<Utilisateur> listeUsers= listUtilisateurBDD.getListUsers(); 
-			ArrayList<Utilisateur> tableUser = new ArrayList<>();
+			ArrayList<Utilisateur> tableUserValid = new ArrayList<>();
 			for (int i = 0; i < listeUsers.size(); i++) {
 				if (!listeUsers.get(i).isAdmin()) {
-					tableUser.add(listeUsers.get(i));
+					tableUserValid.add(listeUsers.get(i));
 				}
 			}
-			request.setAttribute("tableUser", tableUser);
+			request.setAttribute("tableUserValid", tableUserValid);
 			
 			request.setAttribute("displayUtilisateurs", "none");
 			request.setAttribute("displayParcours", "none");
@@ -68,7 +73,22 @@ public class AdminController extends HttpServlet {
 		request.setAttribute("displayUtilisateurs", "none");
 		request.setAttribute("displayParcours", "none");
 		request.setAttribute("displayAttributionParcours", "none");
+		
 
+		//Recuperation liste utilisateurs valides non admin
+		UtilisateurBDDImpl listUtilisateurBDD = new UtilisateurBDD();
+		ArrayList<Utilisateur> listeUsers= listUtilisateurBDD.getListUsers(); 
+		ArrayList<Utilisateur> tableUserValid = new ArrayList<>();
+		for (int i = 0; i < listeUsers.size(); i++) {
+			if (!listeUsers.get(i).isAdmin()) {
+				tableUserValid.add(listeUsers.get(i));
+			}
+		}
+		request.setAttribute("tableUserValid", tableUserValid);
+		//Recuperation liste des quizz(-s? -es?)
+		ParcoursBDD listParcoursBDD = new ParcoursBDD();
+		request.setAttribute("tableQuizzAttr", listParcoursBDD.getAllQuizz());
+		
 		if (request.getParameter("adminStg").equals("Search")) {
 			System.out.println(request.getParameter("adminStg"));
 			rechercheStg(request, response);
@@ -92,7 +112,6 @@ public class AdminController extends HttpServlet {
 		if (request.getParameter("adminStg").equals("Get Quizz")) {
 			System.out.println(request.getParameter("adminStg"));
 			recupererTousQuizz(request, response);
-			
 		}
 		if (request.getParameter("adminStg").equals("Ajouter")) {
 			System.out.println(request.getParameter("adminStg"));
@@ -110,6 +129,7 @@ public class AdminController extends HttpServlet {
 			System.out.println(request.getParameter("adminStg"));
 			insererQuestion(request, response);
 		}
+		
 
 		System.out.println("End Admin(doPost) Controller\r");
 	}// doPost()
