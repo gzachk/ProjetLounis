@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import model.Parcours;
 import model.Question;
 import model.Quizz;
 import model.Reponse;
@@ -48,7 +49,7 @@ public class ParcoursBDD {
 		}
 	}// jdbcDisconnect()
 
-// -------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------
 
 	public ArrayList<Question> getQuestion(int idQuizzRecherche) {
 		ResultSet res = null;
@@ -98,7 +99,7 @@ public class ParcoursBDD {
 		return listQuestions;
 	}// getQuestion();
 
-// -------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------
 
 	public ArrayList<Reponse> getReponse(int idQuestionRecherche) {
 		ResultSet res = null;
@@ -141,7 +142,7 @@ public class ParcoursBDD {
 		return listReponses;
 	}// getReponse();
 
-// -------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------
 
 	public ArrayList<Question> getQuizz(String competence) {
 
@@ -196,13 +197,12 @@ public class ParcoursBDD {
 		return questionsDuQuizz;
 	}// getQuizz();
 
-// ----------------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------
 
 	public boolean addQuestion(Question question, ArrayList<String> listesDesReponses, String reponseCorrecte) {
 		boolean statut = false;
 		String sql = "";
 		ResultSet res = null;
-		
 
 		jdbcConnect();
 		// Insertion de la nouvelle question
@@ -219,25 +219,25 @@ public class ParcoursBDD {
 
 			System.out.println("1/ insertion question reussi");
 
-		//Recuperation id_question insere
-		int idQuestion = 0;
+			// Recuperation id_question insere
+			int idQuestion = 0;
 
-			//sql = "SELECT id_question FROM QUESTION where texte=\""+ question.getTexte() +"\"";
+			// sql = "SELECT id_question FROM QUESTION where texte=\""+ question.getTexte()
+			// +"\"";
 
-			//prepStmt = conn.prepareStatement(sql);
+			// prepStmt = conn.prepareStatement(sql);
 			prepStmt = conn.prepareStatement("SELECT id_question FROM QUESTION where texte=?");
-			prepStmt.setString(1,  question.getTexte());
-			//res = prepStmt.executeQuery(sql);
+			prepStmt.setString(1, question.getTexte());
+			// res = prepStmt.executeQuery(sql);
 			res = prepStmt.executeQuery();
-
 
 			while (res.next()) {
 				idQuestion = res.getInt("id_question");
 			}
-			System.out.println("2/ recuperation id question reussi("+ idQuestion +")");
+			System.out.println("2/ recuperation id question reussi(" + idQuestion + ")");
 
-		//avec l'id_question, insertion des reponse
-		for (int i = 0; i < listesDesReponses.size(); i++) {
+			// avec l'id_question, insertion des reponse
+			for (int i = 0; i < listesDesReponses.size(); i++) {
 
 				sql = "INSERT INTO REPONSE (texte, id_question)" + "VALUES (?, ?)";
 
@@ -248,35 +248,31 @@ public class ParcoursBDD {
 				prepStmt.setInt(2, idQuestion);
 
 				prepStmt.executeUpdate();
-				
-				if(i==listesDesReponses.size()-1) {
+
+				if (i == listesDesReponses.size() - 1) {
 					System.out.println("3/ insertion reponses possibles reussi");
 				}
 
-		} // fin for()
-		
-		//recuperation de l'id de la reponse correcte
-		int idReponse = 0;
+			} // fin for()
 
-//			sql = "SELECT id_reponse FROM REPONSE where texte='" + reponseCorrecte + "'";
+			// recuperation de l'id de la reponse correcte
+			int idReponse = 0;
 
-//			prepStmt = conn.prepareStatement(sql);
+			// sql = "SELECT id_reponse FROM REPONSE where texte='" + reponseCorrecte + "'";
+
+			// prepStmt = conn.prepareStatement(sql);
 			prepStmt = conn.prepareStatement("SELECT id_reponse FROM REPONSE where texte=?");
-			prepStmt.setString(1,  reponseCorrecte);
+			prepStmt.setString(1, reponseCorrecte);
 			res = prepStmt.executeQuery();
-
 
 			while (res.next()) {
 				idReponse = res.getInt("id_reponse");
 			}
-			System.out.println("4/ recuperation id reponse correcte reussi("+ idReponse +")");
+			System.out.println("4/ recuperation id reponse correcte reussi(" + idReponse + ")");
 
-		
-		
-		//injection id rep correcte dans question.
+			// injection id rep correcte dans question.
 
-			sql = "UPDATE question SET `id_reponse_correct`= "+ idReponse +" WHERE id_question = "+ idQuestion;
-
+			sql = "UPDATE question SET `id_reponse_correct`= " + idReponse + " WHERE id_question = " + idQuestion;
 
 			prepStmt = conn.prepareStatement(sql);
 
@@ -294,7 +290,7 @@ public class ParcoursBDD {
 		return statut;
 	}// addQuestion()
 
-// -------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------
 
 	public ArrayList<Quizz> getAllQuizz() {
 
@@ -343,7 +339,7 @@ public class ParcoursBDD {
 		return listQuizz;
 	}// getAllQuizz();
 
-// ----------------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------
 
 	public boolean addCompetence(String competence) {
 		boolean statut = false;
@@ -401,7 +397,7 @@ public class ParcoursBDD {
 
 		return statut;
 	}// addCompetence()
-// ----------------------------------------------------------------------------------
+	// ----------------------------------------------------------------------------------
 
 	public boolean recuperationCompetence(String competence) {
 		boolean statut = false;
@@ -431,27 +427,27 @@ public class ParcoursBDD {
 		return statut;
 	}// recuperationCompetence()
 
-//---------------------------------------------------------------------------------------
-	
+	// ---------------------------------------------------------------------------------------
+
 	public void deleteCompetence(ArrayList<String> competenceList) {
 		if (competenceList.size() > 0) {
 
 			jdbcConnect();
 
 			for (int i = 0; i < competenceList.size(); i++) {
-				
+
 				try {
-					String sql = "DELETE FROM quizz WHERE id_competence = '"+ competenceList.get(i)+  "'";
+					String sql = "DELETE FROM quizz WHERE id_competence = '" + competenceList.get(i) + "'";
 
 					prepStmt = conn.prepareStatement(sql);
 					prepStmt.executeUpdate(sql);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				
+
 				try {
-					String sql = "DELETE FROM competence WHERE sujet = '"+ competenceList.get(i)+ "'";
-					System.out.println(" sujet a supprime: "+ competenceList.get(i));
+					String sql = "DELETE FROM competence WHERE sujet = '" + competenceList.get(i) + "'";
+					System.out.println(" sujet a supprime: " + competenceList.get(i));
 
 					prepStmt = conn.prepareStatement(sql);
 					prepStmt.executeUpdate(sql);
@@ -460,50 +456,140 @@ public class ParcoursBDD {
 					e.printStackTrace();
 				}
 			} // end for
-			
+
 			jdbcDisconnect();
 		}
 	}// deleteCompetence()
 
-// -------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------
 
-		public int getIdQuizz(String competence) {
+	public int getIdQuizz(String competence) {
 
-			jdbcConnect();
+		jdbcConnect();
 
-			ResultSet res = null;
+		ResultSet res = null;
 
-			String sql = "SELECT * FROM `quizz` WHERE `id_competence` = '" + competence + "'";
+		String sql = "SELECT * FROM `quizz` WHERE `id_competence` = '" + competence + "'";
 
-			Quizz quizzRecupere = new Quizz();
+		Quizz quizzRecupere = new Quizz();
 
-			try {
-				int idQuizz;
-				String idCompetence = null;
+		try {
+			int idQuizz;
+			String idCompetence = null;
 
-				prepStmt = conn.prepareStatement(sql);
-				res = prepStmt.executeQuery(sql);
+			prepStmt = conn.prepareStatement(sql);
+			res = prepStmt.executeQuery(sql);
 
-				while (res.next()) {
-					idQuizz = res.getInt("ID_QUIZZ");
-					idCompetence = res.getString("ID_COMPETENCE");
+			while (res.next()) {
+				idQuizz = res.getInt("ID_QUIZZ");
+				idCompetence = res.getString("ID_COMPETENCE");
 
-					quizzRecupere = new Quizz(idQuizz, idCompetence);
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+				quizzRecupere = new Quizz(idQuizz, idCompetence);
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-			try {
-				res.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+		try {
+			res.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("\rCompetence: " + quizzRecupere.getIdCompetence());
+		System.out.println("\rIdQuizz: " + quizzRecupere.getIdQuizz());
+
+		jdbcDisconnect();
+		return quizzRecupere.getIdQuizz();
+	}// getIdQuizz();
+
+	// -------------------------------------------------------------------------------
+	
+	public Parcours getParcours(int idParcoursVoulu) {
+		jdbcConnect();
+
+		ResultSet res = null;
+
+		String sql ="SELECT * FROM parcours WHERE id_parcours=?";
+		Parcours parcoursRecupere = new Parcours();
+
+		try {
+			int idParcours;// p-e redondant...
+			int idQuizz;
+			int idUtilisateur;
+			int score;
+
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.setInt(1, idParcoursVoulu);
+			res = prepStmt.executeQuery(sql);
+
+			while (res.next()) {
+				idParcours = res.getInt("ID_PARCOURS");
+				idQuizz = res.getInt("ID_QUIZZ");
+				idUtilisateur = res.getInt("ID_UTILISATEUR");
+				score = res.getInt("SCORE");
+				
+				parcoursRecupere = new Parcours(idParcours, idQuizz, idUtilisateur, score);
 			}
+			
+			System.out.println(" - Recuperation Parcour reussi - ");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
-			System.out.println("\rCompetence: " + quizzRecupere.getIdCompetence());
-			System.out.println("\rIdQuizz: " + quizzRecupere.getIdQuizz());
+		try {
+			res.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		jdbcDisconnect();
+		return parcoursRecupere;
+	}
+	// -------------------------------------------------------------------------------
+	
+	public Parcours getlistParcours(int idParcoursVoulu) {
+		jdbcConnect();
 
-			jdbcDisconnect();
-			return quizzRecupere.getIdQuizz();
-		}// getIdQuizz();
+		ResultSet res = null;
+
+		String sql ="SELECT * FROM parcours WHERE id_parcours=?";
+		
+		Parcours parcoursRecupere = new Parcours();
+
+		try {
+			int idParcours;// p-e redondant...
+			int idQuizz;
+			int idUtilisateur;
+			int score;
+
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.setInt(1, idParcoursVoulu);
+			res = prepStmt.executeQuery(sql);
+
+			while (res.next()) {
+				idParcours = res.getInt("ID_PARCOURS");
+				idQuizz = res.getInt("ID_QUIZZ");
+				idUtilisateur = res.getInt("ID_UTILISATEUR");
+				score = res.getInt("SCORE");
+				
+				parcoursRecupere = new Parcours(idParcours, idQuizz, idUtilisateur, score);
+			}
+			
+			System.out.println(" - Recuperation Parcour reussi - ");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			res.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		jdbcDisconnect();
+		return parcoursRecupere;
+	}
+	// -------------------------------------------------------------------------------
+	// -------------------------------------------------------------------------------
 }// - ParcoursBDD

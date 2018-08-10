@@ -103,6 +103,7 @@ public class AccueilController extends HttpServlet {
 				session = request.getSession(true);
 				session.setAttribute("MySessionVariable", utilisateurConnecte.getPrenom());
 				session.setAttribute("MySessionVariableAdmin", utilisateurConnecte.isAdmin());
+//******		session.setAttribute("MySessionVariableParcours", utilisateurConnecte.isAdmin());
 				System.out.println("blabla: " + session.getAttribute("MySessionVariable"));
 				
 				response.sendRedirect("parcours");

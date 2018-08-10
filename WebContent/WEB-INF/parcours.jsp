@@ -58,7 +58,9 @@
 				</table>
 			
 		</div>
-
+		
+		
+<%-- 		<div style="display: none">${MySessionVariableParcours}</div> --%>
 		<c:set var="footerText" value="session Parcours" />
 		<%@include file="footer.jsp"%>
 	</div>
