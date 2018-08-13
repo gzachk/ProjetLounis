@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import model.Question;
 import model.Reponse;
@@ -26,7 +27,11 @@ public class QuestionnaireController extends HttpServlet{
 
 		System.out.println("Begin Questionnaire(doGet) Controller");
 		
-
+		HttpSession session= request.getSession();
+		System.out.print(" - - - Valeurs Session - Prenom(" + session.getAttribute("MySessionVariable"));
+		System.out.print(") Admin("+session.getAttribute("sessionIsAdmin"));
+		System.out.print(") Valide("+session.getAttribute("sessionIsValid"));
+		System.out.println(") ID("+session.getAttribute("sessionUserId")+")");
 		
 		request.getRequestDispatcher("WEB-INF/questionnaire.jsp").forward(request, response);
 

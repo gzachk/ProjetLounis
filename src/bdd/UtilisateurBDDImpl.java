@@ -37,4 +37,6 @@ public interface UtilisateurBDDImpl {
 	
 	public void linkUserPassword(Utilisateur nouvelUtilisateur/*, String password*/);
 	//---------------------------------------------------------------------------------------
+	public String getUserPassword(int userID);
+	//---------------------------------------------------------------------------------------
 }// - UtilisateurBDDImpl

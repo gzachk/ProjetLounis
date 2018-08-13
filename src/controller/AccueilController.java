@@ -29,7 +29,6 @@ public class AccueilController extends HttpServlet {
 		System.out.println("Begin Accueil(doGet) Controller");
 
 		HttpSession session= request.getSession();
-		session.setAttribute("MySessionVariableAdmin", false);
 		
 		request.getRequestDispatcher("WEB-INF/accueil.jsp").forward(request, response);
 		System.out.println("End Accueil(doGet) Controller\r");
@@ -41,7 +40,7 @@ public class AccueilController extends HttpServlet {
 		System.out.println("Begin Accueil(doPost) Controller");
 		
 		HttpSession session= request.getSession();
-		System.out.println(session.isNew());
+//		System.out.println(session.isNew());
 //		System.out.println("blabla: " + session.getAttribute("MySessionVariable"));
 //		session.invalidate();
 		
@@ -73,7 +72,7 @@ public class AccueilController extends HttpServlet {
 		}else {
 			
 			for (int i = 0; i < tableUser.size(); i++) {
-				if (identifiant.equals(tableUser.get(i).getEmail())) {
+				if (identifiant.equals(tableUser.get(i).getEmail()) && password.equals(listUtilisateurBDD.getUserPassword(tableUser.get(i).getIdUtilisateur()))) {
 					utilisateurConnecte = tableUser.get(i);
 					isAdmin = utilisateurConnecte.isAdmin();
 					isValid = utilisateurConnecte.isValid();
@@ -86,10 +85,16 @@ public class AccueilController extends HttpServlet {
 			if(identifiant.equals(utilisateurConnecte.getEmail()) && isAdmin) {
 				System.out.println("Bienvenu "+utilisateurConnecte.getPrenom());
 				
+				//gestion session(?)
 				session = request.getSession(true);
 				session.setAttribute("MySessionVariable", utilisateurConnecte.getPrenom());
-				session.setAttribute("MySessionVariableAdmin", utilisateurConnecte.isAdmin());
-				System.out.println("blabla: " + session.getAttribute("MySessionVariable"));
+				session.setAttribute("sessionIsAdmin", utilisateurConnecte.isAdmin());
+				session.setAttribute("sessionIsValid", utilisateurConnecte.isValid());
+				session.setAttribute("sessionUserId", utilisateurConnecte.getIdUtilisateur());
+				System.out.print(" - - - Valeurs Session - Prenom(" + session.getAttribute("MySessionVariable"));
+				System.out.print(") Admin("+session.getAttribute("sessionIsAdmin"));
+				System.out.print(") Valide("+session.getAttribute("sessionIsValid"));
+				System.out.println(") ID("+session.getAttribute("sessionUserId")+")");
 
 				request.setAttribute("displayUtilisateurs", "none");
 				request.setAttribute("displayParcours", "none");
@@ -102,16 +107,25 @@ public class AccueilController extends HttpServlet {
 				//request.getRequestDispatcher("WEB-INF/questionnaire.jsp").forward(request, response);
 				session = request.getSession(true);
 				session.setAttribute("MySessionVariable", utilisateurConnecte.getPrenom());
-				session.setAttribute("MySessionVariableAdmin", utilisateurConnecte.isAdmin());
+				session.setAttribute("sessionIsAdmin", utilisateurConnecte.isAdmin());
+				session.setAttribute("sessionIsValid", utilisateurConnecte.isValid());
+				session.setAttribute("sessionUserId", utilisateurConnecte.getIdUtilisateur());
+				System.out.print(" - - - Valeurs Session - Prenom(" + session.getAttribute("MySessionVariable"));
+				System.out.print(") Admin("+session.getAttribute("sessionIsAdmin"));
+				System.out.print(") Valide("+session.getAttribute("sessionIsValid"));
+				System.out.println(") ID("+session.getAttribute("sessionUserId")+")");
 //******		session.setAttribute("MySessionVariableParcours", utilisateurConnecte.isAdmin());
-				System.out.println("blabla: " + session.getAttribute("MySessionVariable"));
 				
 				response.sendRedirect("parcours");
-				
-				System.out.println("\rLogged in.\rWelcome "+identifiant+"\r");
 			}else {
 //				response.sendRedirect("accueil");
 				session.setAttribute("MySessionVariableAdmin", false);
+
+				System.out.print(" - - - Valeurs Session - Prenom(" + session.getAttribute("MySessionVariable"));
+				System.out.print(") Admin("+session.getAttribute("sessionIsAdmin"));
+				System.out.print(") Valide("+session.getAttribute("sessionIsValid"));
+				System.out.println(") ID("+session.getAttribute("sessionUserId")+")");
+				session.invalidate();
 				request.getRequestDispatcher("WEB-INF/accueil.jsp").forward(request, response);
 			}
 			

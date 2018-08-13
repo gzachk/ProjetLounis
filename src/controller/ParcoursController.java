@@ -21,22 +21,51 @@ public class ParcoursController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		System.out.println("Begin Parcours(doGet) Controller");
 		
-		ParcoursBDD instanceParcoursBDD = new ParcoursBDD();
-		ArrayList<Quizz> listeQuizz = instanceParcoursBDD.getAllQuizz();
-		if (listeQuizz.size() > 0 ) {
-			request.setAttribute("listeDesCompets", listeQuizz );
+		HttpSession session = request.getSession();
+//		session.getAttribute("MySessionVariable");
+//		session.getAttribute("sessionIsAdmin");
+//		session.getAttribute("sessionUserId");
+
+		System.out.print(" - - - Valeurs Session - Prenom(" + session.getAttribute("MySessionVariable"));
+		System.out.print(") Admin("+session.getAttribute("sessionIsAdmin"));
+		System.out.print(") Valide("+session.getAttribute("sessionIsValid"));
+		System.out.println(") ID("+session.getAttribute("sessionUserId")+")");
+		
+		if(session.getAttribute("sessionIsValid") == null) {
+			System.out.println(" - - - Redirection page accueil(login)");
+			response.sendRedirect("accueil");
+		}else {
+			int idUserConnecte = (Integer) session.getAttribute("sessionUserId");
 			
+			ParcoursBDD instanceParcoursBDD = new ParcoursBDD();
+			ArrayList<Quizz> listeQuizz = new ArrayList<>();
+			
+			//Parcours pour utilisateur admin(if) et non admin(else)
+			if((boolean) session.getAttribute("sessionIsAdmin")) {
+				listeQuizz = instanceParcoursBDD.getAllQuizz();				
+			}else {
+				try {
+					listeQuizz = instanceParcoursBDD.getListQuizzUtilisateur(idUserConnecte);
+				} catch (Exception e) {
+					//Quizz emptyQuizz = new Quizz(-999, "En cours d'attribution");
+					//listeQuizz.add(emptyQuizz);
+					System.out.println("/!\\ - Utilisateur sans parcours - /!\\");
+				}
+			}
+			
+			//Transfert liste a la jsp
+			if (listeQuizz.size() > 0 ) {
+				request.setAttribute("listeDesCompets", listeQuizz);
+			}else {
+				System.out.println("Retour de parcours vide.");
+			}
+			
+			request.getRequestDispatcher("WEB-INF/parcours.jsp").forward(request, response);
 		}
-		HttpSession session = request.getSession(true);
-		session.getAttribute("MySessionVariable");
-
-		request.getRequestDispatcher("WEB-INF/parcours.jsp").forward(request, response);
-
+		
 		System.out.println("End Parcours(doGet) Controller\r");
-
 	}// doGet()
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -47,5 +76,4 @@ public class ParcoursController extends HttpServlet {
 
 		System.out.println("End Parcours(doPost) Controller\r");
 	}// doPost()
-
 }// - ParcoursController

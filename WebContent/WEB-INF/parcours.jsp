@@ -60,9 +60,10 @@
 		</div>
 		
 		
-<%-- 		<div style="display: none">${MySessionVariableParcours}</div> --%>
 		<c:set var="footerText" value="session Parcours" />
 		<%@include file="footer.jsp"%>
 	</div>
 </body>
 </html>
+<%-- 				<input type="hidden" name="sessionIsAdmin" value="${MySessionVariableAdmin}" /> --%>
+<%-- 				<input type="hidden" name="sessionUserId" value="${MySessionVariableIdUtilisateur}" /> --%>

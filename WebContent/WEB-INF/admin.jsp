@@ -230,7 +230,8 @@
 			</div>
 
 		</div>
-		<div style="display: none">${MySessionVariableAdmin}</div>
+<%-- 				<input type="hidden" name="sessionIsAdmin" value="${MySessionVariableAdmin}" /> --%>
+<%-- 				<input type="hidden" name="sessionUserId" value="${MySessionVariableIdUtilisateur}" /> --%>
 		<c:set var="footerText" value="session Admin" />
 		<%@include file="footer.jsp"%>
 	</div>

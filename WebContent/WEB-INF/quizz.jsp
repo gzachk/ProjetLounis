@@ -25,16 +25,6 @@
 					<c:set var="numQuestion" value="${numQuestion+1}" />
 					<div class="question_div">
 						<!-- ---------------------------------------------- -->
-						<!-- 				<table> -->
-						<!-- 					<tr> -->
-						<!-- 				---------------------------------------------- -->
-
-
-
-						<!-- 				---------------------------------------------- -->
-						<!-- 					</tr> -->
-						<!-- 				</table> -->
-						<!-- ---------------------------------------------- -->
 						<table class="questionnaire">
 							<thead>
 								<tr>
@@ -43,9 +33,7 @@
 									<input type="hidden" name="nbrOfReponses${numQuestion}" value="${question.getListeReponses().size()}" />
 										<hr>
 									</th>
-
 								</tr>
-
 							</thead>
 
 							<tbody class="choixReponse">
@@ -65,6 +53,7 @@
 
 							</tbody>
 						</table>
+						<!-- ---------------------------------------------- -->
 					</div>
 
 					<p>

@@ -30,34 +30,47 @@ public class AdminController extends HttpServlet {
 		System.out.println("Begin Admin(doGet) Controller");
 		
 		HttpSession session= request.getSession();
-//		System.out.println(session.isNew());
+
+		System.out.print(" - - - Valeurs Session - Prenom(" + session.getAttribute("MySessionVariable"));
+		System.out.print(") Admin("+session.getAttribute("sessionIsAdmin"));
+		System.out.print(") Valide("+session.getAttribute("sessionIsValid"));
+		System.out.println(") ID("+session.getAttribute("sessionUserId")+")");
 		
-		
-		//Verfification si utilisateur admin(if) ou pas(else) SI un utilisateur est connecte
-		if ((boolean) session.getAttribute("MySessionVariableAdmin")) {
-			//Recuperation liste des quizz(-s? -es?)
-			ParcoursBDD listParcoursBDD = new ParcoursBDD();
-			request.setAttribute("tableQuizzAttr", listParcoursBDD.getAllQuizz());
+		try {
 			
-			
-			//Recuperation liste utilisateurs valide non admin
-			UtilisateurBDDImpl listUtilisateurBDD = new UtilisateurBDD();
-			ArrayList<Utilisateur> listeUsers= listUtilisateurBDD.getListUsers(); 
-			ArrayList<Utilisateur> tableUserValid = new ArrayList<>();
-			for (int i = 0; i < listeUsers.size(); i++) {
-				if (!listeUsers.get(i).isAdmin()) {
-					tableUserValid.add(listeUsers.get(i));
+			//Verfification si utilisateur admin(if) ou pas(else) SI un utilisateur est connecte
+			if ((boolean) session.getAttribute("sessionIsAdmin")) {
+				//Recuperation liste des quizz(-s? -es?)
+				ParcoursBDD listParcoursBDD = new ParcoursBDD();
+				request.setAttribute("tableQuizzAttr", listParcoursBDD.getAllQuizz());
+				
+				
+				//Recuperation liste utilisateurs valide non admin
+				UtilisateurBDDImpl listUtilisateurBDD = new UtilisateurBDD();
+				ArrayList<Utilisateur> listeUsers= listUtilisateurBDD.getListUsers(); 
+				ArrayList<Utilisateur> tableUserValid = new ArrayList<>();
+				for (int i = 0; i < listeUsers.size(); i++) {
+					if (!listeUsers.get(i).isAdmin()) {
+						tableUserValid.add(listeUsers.get(i));
+					}
 				}
+				request.setAttribute("tableUserValid", tableUserValid);
+				
+				request.setAttribute("displayUtilisateurs", "none");
+				request.setAttribute("displayParcours", "none");
+				request.setAttribute("displayAttributionParcours", "none");
+				request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request, response);
+			}else {
+				System.out.println(" - - - Redirection page parcours");
+				response.sendRedirect("parcours");
 			}
-			request.setAttribute("tableUserValid", tableUserValid);
 			
-			request.setAttribute("displayUtilisateurs", "none");
-			request.setAttribute("displayParcours", "none");
-			request.setAttribute("displayAttributionParcours", "none");
-			request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request, response);
-		}else {
-			response.sendRedirect("parcours");
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(" - - - Redirection page accueil(login)");
+			response.sendRedirect("accueil");
 		}
+		
 		
 
 		

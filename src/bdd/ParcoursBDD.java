@@ -25,6 +25,7 @@ public class ParcoursBDD {
 			// Connect (localhost:3306 -> Windows ports)
 			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/projet_questionnaire", "root", "");
 			System.out.println("- Connection opened -");
+			System.out.println("----------------------");
 		} catch (SQLException se) {
 			se.printStackTrace();
 		} catch (Exception e) {
@@ -36,16 +37,18 @@ public class ParcoursBDD {
 		try {
 			if (prepStmt != null)
 				prepStmt.close();
-			// System.out.println("Statement closed");
+			 	//System.out.println("- Statement closed -");
 		} catch (SQLException se2) {
 		}
 
 		try {
 			if (conn != null)
 				conn.close();
-			System.out.println("- Connection closed -");
+				System.out.println("----------------------");
+				System.out.println("- Connection closed -");
 		} catch (SQLException se) {
 			se.printStackTrace();
+			System.out.println("- Connection failed to close -");
 		}
 	}// jdbcDisconnect()
 
@@ -84,7 +87,6 @@ public class ParcoursBDD {
 				// System.out.println("nbre rep possible: " +
 				// question.getListeReponses().size());
 				System.out.println(" --> id rep correcte: " + question.getIdreponseCorrect());
-				System.out.println();
 			}
 
 		} catch (SQLException e) {
@@ -92,7 +94,9 @@ public class ParcoursBDD {
 		}
 
 		try {
-			res.close();
+			if(res != null) {				
+				res.close();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -134,7 +138,9 @@ public class ParcoursBDD {
 		}
 
 		try {
-			res.close();
+			if(res != null) {				
+				res.close();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -150,7 +156,7 @@ public class ParcoursBDD {
 
 		ResultSet res = null;
 
-		String sql = "SELECT * FROM `quizz` WHERE `id_competence` = '" + competence + "'";
+		String sql = "SELECT * FROM `quizz` WHERE id_competence=?";
 
 		Quizz quizzRecupere = new Quizz();
 
@@ -159,7 +165,8 @@ public class ParcoursBDD {
 			String idCompetence = null;
 
 			prepStmt = conn.prepareStatement(sql);
-			res = prepStmt.executeQuery(sql);
+			prepStmt.setString(1, competence);
+			res = prepStmt.executeQuery();
 
 			while (res.next()) {
 				idQuizz = res.getInt("ID_QUIZZ");
@@ -171,29 +178,22 @@ public class ParcoursBDD {
 			e.printStackTrace();
 		}
 
-		try {
-			res.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
 		System.out.println("\rCompetence: " + quizzRecupere.getIdCompetence());
-
 		ArrayList<Question> questionsDuQuizz = getQuestion(quizzRecupere.getIdQuizz());
 
-		// -- Test Nombre Aleatoire --
-		// int randomNumberTest = questionsDuQuizz.size();
-		//
-		// for (int i = 0; i < 10; i++) {
-		//
-		//// randomNumberTest = (int) (Math.random()*randomNumberTest +1);
-		// randomNumberTest = (int) (Math.random()*10+1);
-		// System.out.println(" -- -- -- -- -- -- Numero
-		// aleatoire("+questionsDuQuizz.size()+"): "+randomNumberTest);
-		// }
-		// -- Fin du TEST --
+		// Fermeture Connection
+		if (res == null) {
+			jdbcDisconnect();
+		} else {
+			try {
+				res.close();
+				// System.out.println("- ResultSet closed -");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			jdbcDisconnect();
+		}
 
-		jdbcDisconnect();
 		return questionsDuQuizz;
 	}// getQuizz();
 
@@ -284,8 +284,18 @@ public class ParcoursBDD {
 			e.printStackTrace();
 		}
 
-		System.out.println("Deconnexion imminente....");
-		jdbcDisconnect();
+		// Fermeture Connection
+		if (res == null) {
+			jdbcDisconnect();
+		} else {
+			try {
+				res.close();
+				// System.out.println("- ResultSet closed -");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			jdbcDisconnect();
+		}
 
 		return statut;
 	}// addQuestion()
@@ -303,8 +313,6 @@ public class ParcoursBDD {
 
 		Quizz quizzRecupere = new Quizz();
 		ArrayList<Quizz> listQuizz = new ArrayList<>();
-
-		System.out.println();
 
 		try {
 			int idQuizz;
@@ -326,16 +334,22 @@ public class ParcoursBDD {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println(" -> Nbre de competence: " + listQuizz.size());
+		System.out.println();
 
-		try {
-			res.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		// Fermeture Connection
+		if (res == null) {
+			jdbcDisconnect();
+		} else {
+			try {
+				res.close();
+				// System.out.println("- ResultSet closed -");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			jdbcDisconnect();
 		}
 
-		System.out.println("nbre de competence: " + listQuizz.size());
-		System.out.println();
-		jdbcDisconnect();
 		return listQuizz;
 	}// getAllQuizz();
 
@@ -458,7 +472,7 @@ public class ParcoursBDD {
 			} // end for
 
 			jdbcDisconnect();
-		}
+		}// end if
 	}// deleteCompetence()
 
 	// -------------------------------------------------------------------------------
@@ -490,27 +504,131 @@ public class ParcoursBDD {
 			e.printStackTrace();
 		}
 
+		System.out.println("\rCompetence: " + quizzRecupere.getIdCompetence());
+		System.out.println("\rIdQuizz: " + quizzRecupere.getIdQuizz());
+		
+		// Fermeture Connection
+		if (res == null) {
+			jdbcDisconnect();
+		} else {
+			try {
+				res.close();
+				// System.out.println("- ResultSet closed -");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			jdbcDisconnect();
+		}
+
+		return quizzRecupere.getIdQuizz();
+	}// getIdQuizz();
+
+	//*************************************************************************************************************************************
+	
+	// -------------------------------------------------------------------------------
+	// (recuperation de tout les id quizz d'un utilisateur de la table parcours)
+	public ArrayList<Integer> getlistIdQuizzFromParcours(int idUtilisateurVoulu) {
+
+		ResultSet res = null;
+
+		String sql ="SELECT id_quizz FROM parcours WHERE id_utilisateur=?";
+		
+		ArrayList<Integer> listIdQuizz = new ArrayList<>();
+
+		try {
+			int idQuizz;
+
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.setInt(1, idUtilisateurVoulu);
+			res = prepStmt.executeQuery();
+
+			while (res.next()) {
+				idQuizz = res.getInt("ID_QUIZZ");
+				
+				listIdQuizz.add(idQuizz);
+			}
+			System.out.println(" - Recuperation des ID_QUIZZs Utilisateur Reussi");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
 		try {
 			res.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		System.out.println("\rCompetence: " + quizzRecupere.getIdCompetence());
-		System.out.println("\rIdQuizz: " + quizzRecupere.getIdQuizz());
-
-		jdbcDisconnect();
-		return quizzRecupere.getIdQuizz();
-	}// getIdQuizz();
-
+		
+		return listIdQuizz;
+	}// getlistIdQuizzFromParcours()
 	// -------------------------------------------------------------------------------
+	// (recuperation des quizz disponible a l'utilisateur)
+	public ArrayList<Quizz> getListQuizzUtilisateur(int idUtilisateurVoulu) {
+
+		jdbcConnect();
+
+		int numQuizz = 0;
+		ResultSet res = null;
+		
+		ArrayList<Integer> listIdQuizz = getlistIdQuizzFromParcours(idUtilisateurVoulu);
+		
+		String sql = "SELECT * FROM `quizz` where id_quizz=?";
+		
+		Quizz quizzRecupere = new Quizz();
+		ArrayList<Quizz> listQuizz = new ArrayList<>();
+
+		try {
+			int idQuizz;
+			String idCompetence = null;
+			
+			for (int i = 0; i < listIdQuizz.size(); i++) {
+				
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, listIdQuizz.get(i));
+				res = prepStmt.executeQuery();
+				
+				while (res.next()) {
+					idQuizz = res.getInt("ID_QUIZZ");
+					idCompetence = res.getString("ID_COMPETENCE");
+
+					quizzRecupere = new Quizz(idQuizz, idCompetence);
+					listQuizz.add(quizzRecupere);
+
+					numQuizz++;
+					System.out.println("Competence(" + numQuizz + "): " + quizzRecupere.getIdCompetence());
+				}// while()
+			}// for(i)
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(" - Nbre de competence(s) recupere: " + listQuizz.size());
+		System.out.println();
+		
+		
+		// Fermeture Connection
+		if (res == null) {
+			jdbcDisconnect();
+		} else {
+			try {
+				res.close();
+				// System.out.println("- ResultSet closed -");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			jdbcDisconnect();
+		}
+
+		return listQuizz;
+	}// getListQuizzUtilisateur();
 	
+	// -------------------------------------------------------------------------------
+	// WIP
 	public Parcours getParcours(int idParcoursVoulu) {
 		jdbcConnect();
 
 		ResultSet res = null;
 
-		String sql ="SELECT * FROM parcours WHERE id_parcours=?";
+		String sql = "SELECT * FROM parcours WHERE id_parcours=?";
 		Parcours parcoursRecupere = new Parcours();
 
 		try {
@@ -521,75 +639,38 @@ public class ParcoursBDD {
 
 			prepStmt = conn.prepareStatement(sql);
 			prepStmt.setInt(1, idParcoursVoulu);
-			res = prepStmt.executeQuery(sql);
+			res = prepStmt.executeQuery();
 
 			while (res.next()) {
 				idParcours = res.getInt("ID_PARCOURS");
 				idQuizz = res.getInt("ID_QUIZZ");
 				idUtilisateur = res.getInt("ID_UTILISATEUR");
 				score = res.getInt("SCORE");
-				
+
 				parcoursRecupere = new Parcours(idParcours, idQuizz, idUtilisateur, score);
 			}
-			
+
 			System.out.println(" - Recuperation Parcour reussi - ");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
-		try {
-			res.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		jdbcDisconnect();
-		return parcoursRecupere;
-	}
-	// -------------------------------------------------------------------------------
-	
-	public Parcours getlistParcours(int idParcoursVoulu) {
-		jdbcConnect();
-
-		ResultSet res = null;
-
-		String sql ="SELECT * FROM parcours WHERE id_parcours=?";
-		
-		Parcours parcoursRecupere = new Parcours();
-
-		try {
-			int idParcours;// p-e redondant...
-			int idQuizz;
-			int idUtilisateur;
-			int score;
-
-			prepStmt = conn.prepareStatement(sql);
-			prepStmt.setInt(1, idParcoursVoulu);
-			res = prepStmt.executeQuery(sql);
-
-			while (res.next()) {
-				idParcours = res.getInt("ID_PARCOURS");
-				idQuizz = res.getInt("ID_QUIZZ");
-				idUtilisateur = res.getInt("ID_UTILISATEUR");
-				score = res.getInt("SCORE");
-				
-				parcoursRecupere = new Parcours(idParcours, idQuizz, idUtilisateur, score);
+		// Fermeture Connection
+		if (res == null) {
+			jdbcDisconnect();
+		} else {
+			try {
+				res.close();
+				// System.out.println("- ResultSet closed -");
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-			
-			System.out.println(" - Recuperation Parcour reussi - ");
-		} catch (SQLException e) {
-			e.printStackTrace();
+			jdbcDisconnect();
 		}
 
-		try {
-			res.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		jdbcDisconnect();
 		return parcoursRecupere;
-	}
+	}// getParcours()
+	//*************************************************************************************************************************************
 	// -------------------------------------------------------------------------------
 	// -------------------------------------------------------------------------------
 }// - ParcoursBDD

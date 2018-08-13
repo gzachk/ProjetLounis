@@ -21,6 +21,7 @@ public class UtilisateurBDD implements UtilisateurBDDImpl{
 			// Connect (localhost:3306 -> Windows ports)
 			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/projet_questionnaire", "root", "");
 			System.out.println("- Connection opened -");
+			System.out.println("----------------------");
 		} catch (SQLException se) {
 			se.printStackTrace();
 		} catch (Exception e) {
@@ -39,6 +40,7 @@ public class UtilisateurBDD implements UtilisateurBDDImpl{
 		try {
 			if (conn != null)
 				conn.close();
+			System.out.println("----------------------");
 			System.out.println("- Connection closed -");
 		} catch (SQLException se) {
 			se.printStackTrace();
@@ -95,7 +97,9 @@ public class UtilisateurBDD implements UtilisateurBDDImpl{
 		}
 
 		try {
-			res.close();
+			if(res!=null) {	
+				res.close();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -155,7 +159,9 @@ public class UtilisateurBDD implements UtilisateurBDDImpl{
 		
 
 		try {
-			res.close();
+			if(res!=null) {	
+				res.close();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -207,7 +213,9 @@ public class UtilisateurBDD implements UtilisateurBDDImpl{
 		}
 
 		try {
-			res.close();
+			if(res!=null) {	
+				res.close();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -261,7 +269,9 @@ public class UtilisateurBDD implements UtilisateurBDDImpl{
 		}
 
 		try {
-			res.close();
+			if(res!=null) {	
+				res.close();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -399,6 +409,7 @@ public class UtilisateurBDD implements UtilisateurBDDImpl{
 	//---------------------------------------------------------------------------------------
 	
 	public void linkUserPassword(Utilisateur nouvelUtilisateur/*, String password*/) {
+		ResultSet res = null;
 		String sql = "";
 		int idUtilisateur = 0;
 		
@@ -413,7 +424,6 @@ public class UtilisateurBDD implements UtilisateurBDDImpl{
 
 		// Recuperation de l'id_utilisateur(de la bdd) pour insertion password -----------------------------------------
 		try {
-			ResultSet res = null;
 			sql = "SELECT id_utilisateur FROM utilisateur WHERE "+condition;
 			prepStmt = conn.prepareStatement(sql);
 			res = prepStmt.executeQuery(sql);
@@ -439,8 +449,49 @@ public class UtilisateurBDD implements UtilisateurBDDImpl{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		try {
+			if(res != null) {				
+				res.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}// linkUserPassword()
 	//---------------------------------------------------------------------------------------
-	
+	public String getUserPassword(int userID) {
+		jdbcConnect();
+		
+		ResultSet res = null;
+		String sql = "";
+		String password = "";
+		
+		System.out.println(" - - - Recuperation mot de passe");
+		// Recuperation  password
+		try {
+			sql = "SELECT password FROM password WHERE id_utilisateur=?";
+			
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.setInt(1, userID);
+			res = prepStmt.executeQuery();
+			
+			while (res.next()) {
+				password = res.getString("password");
+//				System.out.println("mdp utilisateur "+password);
+			}			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			if(res != null) {				
+				res.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		jdbcDisconnect();
+		return password;
+	}// getUserPassword()
 	
 }// - UtilisateurBDD
