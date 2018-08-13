@@ -509,9 +509,10 @@ public class ParcoursBDD {
 		
 // ----------------------------------------------------------------------------------
 
-	public boolean attribuerCompetence(int idCompetence, int idQuizz, int idUtilisateur) {
+	public boolean attribuerCompetence(String competence, int idUtilisateur) {
 		boolean statut = false;
 		String sql = "";
+		ResultSet res = null; 
 
 		jdbcConnect();
 		// Insertion de la nouvelle competence
@@ -522,9 +523,8 @@ public class ParcoursBDD {
 
 				prepStmt = conn.prepareStatement(sql);
 
-				prepStmt.setInt(1, idCompetence);
-				prepStmt.setInt(2, idQuizz);
-				prepStmt.setInt(3, idUtilisateur);
+				prepStmt.setString(1, competence);
+				prepStmt.setInt(2, idUtilisateur);
 
 				prepStmt.executeUpdate();
 
