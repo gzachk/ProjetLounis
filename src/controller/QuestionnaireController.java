@@ -33,7 +33,9 @@ public class QuestionnaireController extends HttpServlet{
 		System.out.print(") Valide("+session.getAttribute("sessionIsValid"));
 		System.out.println(") ID("+session.getAttribute("sessionUserId")+")");
 		
-		request.getRequestDispatcher("WEB-INF/questionnaire.jsp").forward(request, response);
+		response.sendRedirect("parcours");
+		
+//		request.getRequestDispatcher("WEB-INF/questionnaire.jsp").forward(request, response);
 
 		System.out.println("End Questionnaire(doGet) Controller\r");
 

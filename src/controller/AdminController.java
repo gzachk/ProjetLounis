@@ -142,6 +142,10 @@ public class AdminController extends HttpServlet {
 			System.out.println(request.getParameter("adminStg"));
 			insererQuestion(request, response);
 		}
+		if (request.getParameter("adminStg").equals("Attribuer Parcours")) {
+			System.out.println(request.getParameter("adminStg"));
+			attribuerParcours(request, response);
+		}
 		
 
 		System.out.println("End Admin(doPost) Controller\r");
@@ -483,7 +487,34 @@ public class AdminController extends HttpServlet {
 
 		}// insererQuestion()
 		
-		
-		
+// -----------------------------------------------------------------------------------------------
+
+	protected void attribuerParcours(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String erreur = "";
+		// ArrayList<String> listeReponse = new ArrayList<>();
+
+		request.setAttribute("displayAttributionParcours", "block");
+
+		int idUtilisateur = Integer.parseInt(request.getParameter("utilisateurChoisie"));
+		System.out.println(" - id utilisateur selectionne: "+request.getParameter("utilisateurChoisie"));
+
+		// **** getParameterValues() -> recupere un tableau des valeurs selectionne ****
+		String[] listeCompetences = request.getParameterValues("competencesChoisie");
+		// System.out.println(request.getParameterValues("competencesChoisie"));
+
+		for (int i = 0; i < listeCompetences.length; i++) {
+			System.out.println(" - Competence selectionne("+(i+1)+"): "+listeCompetences[i]);
+		}
+
+		ParcoursBDD instanceParcoursBDD = new ParcoursBDD();
+		System.out.println("*********************************   ATTRIBUTION COMPETENCE **************************************************");
+		instanceParcoursBDD.attribuerCompetence(listeCompetences, idUtilisateur);
+
+		erreur = "<br/>Competences attribuer";
+		request.setAttribute("erreur", erreur);
+
+		request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request, response);
+	}// attribuerParcours()
 
 }// - AdminController

@@ -565,7 +565,9 @@ public class ParcoursBDD {
 		}
 
 		try {
-			res.close();
+			if(res!=null) {	
+				res.close();
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -667,8 +669,8 @@ public class ParcoursBDD {
 			if(idParcours!=-999) {				
 				System.out.println(" - Recuperation ID Parcours reussi: #"+idParcours+" - ");
 			}else {
-				System.out.println(" - Echec recuperation ID Parcours - ");
-				return null;
+				parcoursRecupere.setIdParcours(idParcours);
+				System.out.println(" - Echec recuperation ID Parcours! "+ parcoursRecupere.getIdParcours());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -691,5 +693,73 @@ public class ParcoursBDD {
 	}// getIdParcours()
 	//*************************************************************************************************************************************
 	// -------------------------------------------------------------------------------
+
+	public boolean attribuerCompetence(String[] listeCompetences, int idUtilisateur) {
+		boolean statut = false;
+		String sql = "";
+
+		ArrayList<Integer> listeIdQuizz = new ArrayList<>();
+
+		for (int i = 0; i < listeCompetences.length; i++) {
+			int idQuizz = getIdQuizz(listeCompetences[i]);
+			listeIdQuizz.add(idQuizz);
+		}
+
+		for (int i = 0; i < listeIdQuizz.size(); i++) {
+			// 1er getIdParcours = methode du dessus, le 2ieme getter de la classe parcours
+			if (getIdParcours(listeIdQuizz.get(i), idUtilisateur).getIdParcours() == -999) {
+				System.out.println(" - Attribution Parcours.");
+				jdbcConnect();
+				// attribution du parcours
+
+				try {
+					sql = "INSERT INTO PARCOURS (id_quizz, id_utilisateur)" + "VALUES (?,?)";
+
+					prepStmt = conn.prepareStatement(sql);
+
+					prepStmt.setInt(1, listeIdQuizz.get(i));
+					prepStmt.setInt(2, idUtilisateur);
+
+					prepStmt.executeUpdate();
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+				jdbcDisconnect();
+			}// end if
+		} // end for()
+		return statut;
+	}// attribuerCompetencce()
 	// -------------------------------------------------------------------------------
+	
+	public boolean insererChoix(int idParcours, ArrayList<Integer> listeIdReponses) {
+		boolean statut = false;
+		String sql = "";
+		jdbcConnect();
+		
+		System.out.println(" - "+listeIdReponses.size()+" reponse(s) a inserer.");
+		for (int i = 0; i < listeIdReponses.size(); i++) {
+				System.out.println(" - Insertion choix("+(i+1)+").");
+				// insertion choix
+
+				try {
+					sql = "INSERT INTO CHOIX (id_parcours, id_reponse)" + "VALUES (?,?)";
+
+					prepStmt = conn.prepareStatement(sql);
+
+					prepStmt.setInt(1, idParcours);
+					prepStmt.setInt(2, listeIdReponses.get(i));
+
+					prepStmt.executeUpdate();
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		} // end for()
+		jdbcDisconnect();
+		return statut;
+	}// insererChoix()
+	
+	
 }// - ParcoursBDD

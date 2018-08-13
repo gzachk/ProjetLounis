@@ -10,12 +10,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import bdd.ParcoursBDD;
+import model.Parcours;
 import model.Quizz;
 
 public class QuizzController extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-
+	
+	//Debut compteur temps avant validation reponse
+	long debut;
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("Begin Quizz(doGet) Controller");
@@ -47,7 +51,7 @@ public class QuizzController extends HttpServlet {
 			request.getRequestDispatcher("WEB-INF/quizz.jsp").forward(request, response);
 		}// if/else
 		
-
+		debut = System.currentTimeMillis();
 		System.out.println("End Quizz(doGet) Controller\r");
 
 	}// doGet()
@@ -88,10 +92,29 @@ public class QuizzController extends HttpServlet {
 			reponsesUtilisateur.add(Integer.parseInt(request.getParameter("reponseCoche" + i)));
 		}// for(i)
 		
-		instanceParcoursBDD.getIdQuizz(request.getParameter("competenceQuizz"));
-		instanceParcoursBDD.getIdParcours(instanceParcoursBDD.getIdQuizz(request.getParameter("competenceQuizz")), (Integer)session.getAttribute("sessionUserId"));
+		//instanceParcoursBDD.getIdQuizz(request.getParameter("competenceQuizz"));
+		//Inserer dans la table choix
+		Parcours parcoursQuizz = instanceParcoursBDD.getIdParcours(instanceParcoursBDD.getIdQuizz(request.getParameter("competenceQuizz")), (Integer)session.getAttribute("sessionUserId"));
+		if (parcoursQuizz.getIdParcours() != -999) {
+			//instanceParcoursBDD.insererChoix(parcoursQuizz.getIdParcours(), reponsesUtilisateur);
+		}
+		
 
-		response.sendRedirect("parcours");
+		//Traitement: Affiche la durée d'exécution en millisecondes
+		System.out.println(System.currentTimeMillis()-debut);
+		long tempEnMillis = (System.currentTimeMillis()-debut);
+		long millis = tempEnMillis % 1000;
+		long second = (tempEnMillis / 1000) % 60;
+		long minute = (tempEnMillis / (1000 * 60)) % 60;
+		//long hour = (tempEnMillis / (1000 * 60 * 60)) % 24;
+		
+		String dureeQuizz = minute+"m:"+second+"s:"+millis+"ms";
+		System.out.println(dureeQuizz);
+		
+		request.setAttribute("dureeQuizz", dureeQuizz);
+		request.setAttribute("competence", request.getParameter("competenceQuizz"));
+		
+		request.getRequestDispatcher("WEB-INF/questionnaire.jsp").forward(request, response);
 	}// recuperationReponses()
 
 }// - QuizzController

@@ -188,7 +188,7 @@
 
 							<tr>
 								<td>
-								<select style="width: 250px" size="3" required>
+								<select style="width: 250px"  name="utilisateurChoisie" size="3" required>
 										<option disabled="disabled" value=""> - Utilisateur(-trice) - </option>
 										<c:forEach items="${tableUserValid}" var="stgName">
 											<option value="${stgName.getIdUtilisateur()}">${stgName.getNom()} ${stgName.getPrenom()}</option>
@@ -198,7 +198,7 @@
 							</tr>
 							<tr>
 								<td>
-								<select style="width: 250px" size="4" multiple required>
+								<select style="width: 250px"  name="competencesChoisie" size="4" multiple required>
 										<option value="" disabled="disabled"> - Competence(s) - </option>
 										<c:forEach items="${tableQuizzAttr}" var="competenceName">
 											<option value="${competenceName.getIdCompetence()}">${competenceName.getIdCompetence()}</option>
@@ -210,7 +210,7 @@
 								<td colspan="2">
 									<hr>
 									<!-- 								<form action="admin" method="post"> --> <input
-									type="button" name="adminStg" value="Attribuer Parcours"
+									type="submit" name="adminStg" value="Attribuer Parcours"
 									style="background-color: lightblue" />
 								</td>
 

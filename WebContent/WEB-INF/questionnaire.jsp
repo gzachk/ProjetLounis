@@ -51,70 +51,16 @@
 <body style="font-family: courier">
 	<div id="main_div">
 		<div id="header_div">
-			<h1>Welcome ${identifiantUser}!</h1>
+			<h1>Welcome ${MySessionVariable}!</h1>
 		</div>
 
 		
 		<div id="content_div" align="center">
-			<form action="questionnaire" method="post">
-			
-			
-			<c:set var="numQuestion" value="0"/>
-			<c:forEach var="question" items="${listeQuestions}">
-			<c:set var="numQuestion" value="${numQuestion+1}"/>
-				<div class="question_div">
-				<!-- ---------------------------------------------- -->
-<!-- 				<table> -->
-<!-- 					<tr> -->
-<!-- 				---------------------------------------------- -->
-					
-					
-					
-<!-- 				---------------------------------------------- -->
-<!-- 					</tr> -->
-<!-- 				</table> -->
-				<!-- ---------------------------------------------- -->
-				<table class="questionnaire">
-					<thead>
-						<tr>
-							<th colspan="2">Question n°${numQuestion}
-								<hr>
-							</th>
-
-						</tr>
-
-					</thead>
-					
-					<tbody class="choixReponse">
-						<tr>
-							<td colspan="2"> ${question.getQuestion()}</td>
-						</tr>
-						<tr>
-							<td width="150px"><input type="radio" name="reponseCoche${numQuestion}"/>${question.getReponses().getReponseA()}</td>
-						
-							<td width="150px"><input type="radio" name="reponseCoche${numQuestion}"/>${question.getReponses().getReponseB()}</td>
-						</tr>
-
-						<tr>
-							<td><input type="radio" name="reponseCoche${numQuestion}"/>${question.getReponses().getReponseC()}</td>
-						
-							<td><input type="radio" name="reponseCoche${numQuestion}"/>${question.getReponses().getReponseD()}</td>
-						</tr>
-					</tbody>
-				</table>
-				</div>
-				
-				<p>
-					- - -<br>
-				</p>
-				
-				</c:forEach>
-
-				<input type="submit" value="Validez"
-					style="background-color: chartreuse" />
-				</td>
+			<p>Fin questionnaire de "${competence}"</p>
+			<p>Durée: ${dureeQuizz}</p>
+			<form action="parcours" method="get">
+			<input type="submit" value="Retour Parcours" />
 			</form>
-
 		</div>
 		
 		
