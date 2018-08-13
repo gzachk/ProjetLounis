@@ -724,6 +724,7 @@ public class ParcoursBDD {
 	public boolean attribuerCompetence(String[] listeCompetences, int idUtilisateur) {
 		boolean statut = false;
 		String sql = "";
+		ResultSet res = null; 
 
 		ArrayList<Integer> listeIdQuizz = new ArrayList<>();
 
