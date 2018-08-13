@@ -62,6 +62,7 @@
 
 				</c:forEach>
 				
+				<input type="hidden" name="competenceQuizz" value="${competenceQuizz}" />
 				<input type="hidden" name="nbrOfQuestions" value="${numQuestion}" />
 				<input type="submit" value="Validez"
 					style="background-color: chartreuse" />

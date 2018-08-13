@@ -61,7 +61,6 @@ public class ParcoursController extends HttpServlet {
 			}else {
 				System.out.println("Retour de parcours vide.");
 			}
-			
 			request.getRequestDispatcher("WEB-INF/parcours.jsp").forward(request, response);
 		}
 		

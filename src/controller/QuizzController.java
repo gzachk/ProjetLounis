@@ -43,8 +43,7 @@ public class QuizzController extends HttpServlet {
 					request.setAttribute("listeQuestions", instanceParcoursBDD.getQuizz(listeQuizz.get(i).getIdCompetence()));
 					request.setAttribute("competenceQuizz", listeQuizz.get(i).getIdCompetence());
 				}
-				
-			}
+			}// for()
 			request.getRequestDispatcher("WEB-INF/quizz.jsp").forward(request, response);
 		}// if/else
 		
@@ -58,6 +57,13 @@ public class QuizzController extends HttpServlet {
 			throws ServletException, IOException {
 		System.out.println("Begin Quizz(doPost) Controller");
 		
+		recuperationReponses(request, response);
+		
+		System.out.println("End Quizz(doPost) Controller\r");
+	}// doPost()
+
+//-----------------------------------------------------------------------------------------------
+	public void recuperationReponses(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session= request.getSession();
 
 		System.out.print(" - - - Valeurs Session - Prenom(" + session.getAttribute("MySessionVariable"));
@@ -65,25 +71,27 @@ public class QuizzController extends HttpServlet {
 		System.out.print(") Valide("+session.getAttribute("sessionIsValid"));
 		System.out.println(") ID("+session.getAttribute("sessionUserId")+")");
 		
+		ParcoursBDD instanceParcoursBDD = new ParcoursBDD();
 		ArrayList<Integer> reponsesUtilisateur = new ArrayList<>();
 		
-		System.out.println("Nombre de Question dans le quizz: "+request.getParameter("nbrOfQuestions"));
+		System.out.println(request.getParameter("competenceQuizz"));
+		System.out.println("Nombre de Question dans le quizz: " + request.getParameter("nbrOfQuestions"));
 		int nbreQuestions = Integer.parseInt(request.getParameter("nbrOfQuestions"));
-		
+
 		for (int i = 1; i <= nbreQuestions; i++) {
-			//int nbreReponses = Integer.parseInt(request.getParameter("nbrOfReponses"+i));
-			//System.out.println(" - Nombre de reponse possible(Q"+i+"): " + nbreReponses);
+			// int nbreReponses = Integer.parseInt(request.getParameter("nbrOfReponses"+i));
+			// System.out.println(" - Nombre de reponse possible(Q"+i+"): " + nbreReponses);
 			
-			System.out.println(" -> Reponse(Q"+i+") choisie: "+request.getParameter("reponseCoche" + i));
+			System.out.println(" -> Reponse(Q" + i + ") choisie: " + request.getParameter("reponseCoche" + i));
 			
-			//recuperation de toutes les reponses de l'utilisateur
+			// recuperation de toutes les reponses de l'utilisateur
 			reponsesUtilisateur.add(Integer.parseInt(request.getParameter("reponseCoche" + i)));
-			
 		}// for(i)
 		
+		instanceParcoursBDD.getIdQuizz(request.getParameter("competenceQuizz"));
+		instanceParcoursBDD.getIdParcours(instanceParcoursBDD.getIdQuizz(request.getParameter("competenceQuizz")), (Integer)session.getAttribute("sessionUserId"));
+
 		response.sendRedirect("parcours");
-		//request.getRequestDispatcher("WEB-INF/parcours.jsp").forward(request, response);
-		System.out.println("End Quizz(doPost) Controller\r");
-	}// doPost()
+	}// recuperationReponses()
 
 }// - QuizzController

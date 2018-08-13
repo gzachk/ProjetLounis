@@ -307,6 +307,7 @@ public class ParcoursBDD {
 		jdbcConnect();
 
 		int numQuizz = 0;
+		int sysoutLn = 1;
 		ResultSet res = null;
 
 		String sql = "SELECT * FROM `quizz`";
@@ -320,7 +321,7 @@ public class ParcoursBDD {
 
 			prepStmt = conn.prepareStatement(sql);
 			res = prepStmt.executeQuery(sql);
-
+			
 			while (res.next()) {
 				idQuizz = res.getInt("ID_QUIZZ");
 				idCompetence = res.getString("ID_COMPETENCE");
@@ -329,13 +330,23 @@ public class ParcoursBDD {
 				listQuizz.add(quizzRecupere);
 
 				numQuizz++;
-				System.out.println("Competence(" + numQuizz + "): " + quizzRecupere.getIdCompetence());
+				
+				if(sysoutLn<3) {
+					System.out.print("Competence(" + numQuizz + "): " + quizzRecupere.getIdCompetence()+" - ");
+					sysoutLn++;
+				}else {
+					System.out.println("Competence(" + numQuizz + "): " + quizzRecupere.getIdCompetence());
+					sysoutLn = 1;
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println(" -> Nbre de competence: " + listQuizz.size());
-		System.out.println();
+		if(sysoutLn<3) {
+			System.out.println(" -> Nbre de competence: " + listQuizz.size());
+		}else {
+			System.out.println("\r -> Nbre de competence: " + listQuizz.size());
+		}
 
 		// Fermeture Connection
 		if (res == null) {
@@ -483,7 +494,7 @@ public class ParcoursBDD {
 
 		ResultSet res = null;
 
-		String sql = "SELECT * FROM `quizz` WHERE `id_competence` = '" + competence + "'";
+		String sql = "SELECT * FROM `quizz` WHERE id_competence=?";
 
 		Quizz quizzRecupere = new Quizz();
 
@@ -492,7 +503,8 @@ public class ParcoursBDD {
 			String idCompetence = null;
 
 			prepStmt = conn.prepareStatement(sql);
-			res = prepStmt.executeQuery(sql);
+			prepStmt.setString(1, competence);
+			res = prepStmt.executeQuery();
 
 			while (res.next()) {
 				idQuizz = res.getInt("ID_QUIZZ");
@@ -527,7 +539,7 @@ public class ParcoursBDD {
 	
 	// -------------------------------------------------------------------------------
 	// (recuperation de tout les id quizz d'un utilisateur de la table parcours)
-	public ArrayList<Integer> getlistIdQuizzFromParcours(int idUtilisateurVoulu) {
+	public ArrayList<Integer> getListIdQuizzFromParcours(int idUtilisateurVoulu) {
 
 		ResultSet res = null;
 
@@ -559,7 +571,7 @@ public class ParcoursBDD {
 		}
 		
 		return listIdQuizz;
-	}// getlistIdQuizzFromParcours()
+	}// getListIdQuizzFromParcours()
 	// -------------------------------------------------------------------------------
 	// (recuperation des quizz disponible a l'utilisateur)
 	public ArrayList<Quizz> getListQuizzUtilisateur(int idUtilisateurVoulu) {
@@ -569,7 +581,7 @@ public class ParcoursBDD {
 		int numQuizz = 0;
 		ResultSet res = null;
 		
-		ArrayList<Integer> listIdQuizz = getlistIdQuizzFromParcours(idUtilisateurVoulu);
+		ArrayList<Integer> listIdQuizz = getListIdQuizzFromParcours(idUtilisateurVoulu);
 		
 		String sql = "SELECT * FROM `quizz` where id_quizz=?";
 		
@@ -622,23 +634,25 @@ public class ParcoursBDD {
 	}// getListQuizzUtilisateur();
 	
 	// -------------------------------------------------------------------------------
-	// WIP
-	public Parcours getParcours(int idParcoursVoulu) {
+	// (recuperation ID parcours en fonction de l'id quizz et l'id utilisateur
+	// -> p-e un souci s'il existe plusieurs fois la meme attribution.
+	public Parcours getIdParcours(int idQuizzParcoursVoulu, int idUtilisateurParcoursVoulu) {
 		jdbcConnect();
 
 		ResultSet res = null;
 
-		String sql = "SELECT * FROM parcours WHERE id_parcours=?";
+		String sql = "SELECT * FROM parcours WHERE id_quizz=? AND id_utilisateur=?";
 		Parcours parcoursRecupere = new Parcours();
 
 		try {
-			int idParcours;// p-e redondant...
+			int idParcours = -999;
 			int idQuizz;
 			int idUtilisateur;
 			int score;
 
 			prepStmt = conn.prepareStatement(sql);
-			prepStmt.setInt(1, idParcoursVoulu);
+			prepStmt.setInt(1, idQuizzParcoursVoulu);
+			prepStmt.setInt(2, idUtilisateurParcoursVoulu);
 			res = prepStmt.executeQuery();
 
 			while (res.next()) {
@@ -649,8 +663,13 @@ public class ParcoursBDD {
 
 				parcoursRecupere = new Parcours(idParcours, idQuizz, idUtilisateur, score);
 			}
-
-			System.out.println(" - Recuperation Parcour reussi - ");
+			
+			if(idParcours!=-999) {				
+				System.out.println(" - Recuperation ID Parcours reussi: #"+idParcours+" - ");
+			}else {
+				System.out.println(" - Echec recuperation ID Parcours - ");
+				return null;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -669,7 +688,7 @@ public class ParcoursBDD {
 		}
 
 		return parcoursRecupere;
-	}// getParcours()
+	}// getIdParcours()
 	//*************************************************************************************************************************************
 	// -------------------------------------------------------------------------------
 	// -------------------------------------------------------------------------------
