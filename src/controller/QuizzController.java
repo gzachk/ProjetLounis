@@ -94,9 +94,9 @@ public class QuizzController extends HttpServlet {
 		
 		//instanceParcoursBDD.getIdQuizz(request.getParameter("competenceQuizz"));
 		//Inserer dans la table choix
-		Parcours parcoursQuizz = instanceParcoursBDD.getIdParcours(instanceParcoursBDD.getIdQuizz(request.getParameter("competenceQuizz")), (Integer)session.getAttribute("sessionUserId"));
-		if (parcoursQuizz.getIdParcours() != -999) {
-			//instanceParcoursBDD.insererChoix(parcoursQuizz.getIdParcours(), reponsesUtilisateur);
+		int idParcoursQuizz = instanceParcoursBDD.getIdParcours(instanceParcoursBDD.getIdQuizz(request.getParameter("competenceQuizz")), (Integer)session.getAttribute("sessionUserId"));
+		if (idParcoursQuizz != -999) {
+			instanceParcoursBDD.insererChoix(idParcoursQuizz, reponsesUtilisateur);
 		}
 		
 
@@ -111,8 +111,12 @@ public class QuizzController extends HttpServlet {
 		String dureeQuizz = minute+"m:"+second+"s:"+millis+"ms";
 		System.out.println(dureeQuizz);
 		
+		instanceParcoursBDD.updateParcours(dureeQuizz, idParcoursQuizz);
+		instanceParcoursBDD.updateScore(idParcoursQuizz);
+		
 		request.setAttribute("dureeQuizz", dureeQuizz);
 		request.setAttribute("competence", request.getParameter("competenceQuizz"));
+		
 		
 		request.getRequestDispatcher("WEB-INF/questionnaire.jsp").forward(request, response);
 	}// recuperationReponses()

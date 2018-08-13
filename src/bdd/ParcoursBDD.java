@@ -535,15 +535,13 @@ public class ParcoursBDD {
 		return quizzRecupere.getIdQuizz();
 	}// getIdQuizz();
 
-	//*************************************************************************************************************************************
-	
 	// -------------------------------------------------------------------------------
-	// (recuperation de tout les id quizz d'un utilisateur de la table parcours)
+	// (recuperation de tout les id quizz(non valide) d'un utilisateur de la table parcours)
 	public ArrayList<Integer> getListIdQuizzFromParcours(int idUtilisateurVoulu) {
 
 		ResultSet res = null;
 
-		String sql ="SELECT id_quizz FROM parcours WHERE id_utilisateur=?";
+		String sql ="SELECT id_quizz FROM parcours WHERE id_utilisateur=? AND parcours_valider=false";
 		
 		ArrayList<Integer> listIdQuizz = new ArrayList<>();
 
@@ -587,6 +585,8 @@ public class ParcoursBDD {
 		
 		String sql = "SELECT * FROM `quizz` where id_quizz=?";
 		
+		
+		
 		Quizz quizzRecupere = new Quizz();
 		ArrayList<Quizz> listQuizz = new ArrayList<>();
 
@@ -613,7 +613,7 @@ public class ParcoursBDD {
 			}// for(i)
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
+		} 
 
 		System.out.println(" - Nbre de competence(s) recupere: " + listQuizz.size());
 		System.out.println();
@@ -638,7 +638,7 @@ public class ParcoursBDD {
 	// -------------------------------------------------------------------------------
 	// (recuperation ID parcours en fonction de l'id quizz et l'id utilisateur
 	// -> p-e un souci s'il existe plusieurs fois la meme attribution.
-	public Parcours getIdParcours(int idQuizzParcoursVoulu, int idUtilisateurParcoursVoulu) {
+	public int getIdParcours(int idQuizzParcoursVoulu, int idUtilisateurParcoursVoulu) {
 		jdbcConnect();
 
 		ResultSet res = null;
@@ -689,9 +689,9 @@ public class ParcoursBDD {
 			jdbcDisconnect();
 		}
 
-		return parcoursRecupere;
+		return parcoursRecupere.getIdParcours();
 	}// getIdParcours()
-	//*************************************************************************************************************************************
+
 	// -------------------------------------------------------------------------------
 
 	public boolean attribuerCompetence(String[] listeCompetences, int idUtilisateur) {
@@ -706,8 +706,8 @@ public class ParcoursBDD {
 		}
 
 		for (int i = 0; i < listeIdQuizz.size(); i++) {
-			// 1er getIdParcours = methode du dessus, le 2ieme getter de la classe parcours
-			if (getIdParcours(listeIdQuizz.get(i), idUtilisateur).getIdParcours() == -999) {
+			
+			if (getIdParcours(listeIdQuizz.get(i), idUtilisateur)== -999) {
 				System.out.println(" - Attribution Parcours.");
 				jdbcConnect();
 				// attribution du parcours
@@ -760,6 +760,122 @@ public class ParcoursBDD {
 		jdbcDisconnect();
 		return statut;
 	}// insererChoix()
+	
+	// ----------------------------------------------------------------------------------
+
+	public boolean updateParcours(String dureeParcours, int idParcours) {
+		boolean statut = false;
+		String sql = "";
+		jdbcConnect();
+		System.out.println(" - Mise a jour parcours.");
+
+		try {
+			sql = "UPDATE parcours SET `duree_parcours`=?, `parcours_valider`=? WHERE id_parcours=?";
+				
+
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.setString(1, dureeParcours);
+			prepStmt.setBoolean(2, true);
+			prepStmt.setInt(3, idParcours);
+			prepStmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		
+			jdbcDisconnect();
+		return statut;
+	}// updateParcours()
+	
+	// ----------------------------------------------------------------------------------
+
+	public boolean updateScore(int idParcours) {
+		boolean statut = false;
+		String sql = "";
+		int score = 0;
+		jdbcConnect();
+		
+		ResultSet res = null;
+		ArrayList<Integer> idReponseUtilisateur = new ArrayList<>();
+		
+		
+		try {
+			// recuperation choix utilisateur
+		sql = "SELECT * FROM CHOIX WHERE id_parcours=?"; 
+		
+		prepStmt = conn.prepareStatement(sql);
+			prepStmt.setInt(1, idParcours);
+			res = prepStmt.executeQuery();
+			
+			while (res.next()) {
+				idReponseUtilisateur.add(res.getInt("id_reponse"));
+			}
+				System.out.println(" - Reponses utilisateur recuperer: "+ idReponseUtilisateur.size());
+			
+			// recuperation id Question
+			for (int i = 0; i < idReponseUtilisateur.size(); i++) {
+				System.out.println(" - Recuperation choix utilisateur reussi: "+ idReponseUtilisateur.get(i));
+				int idQuestionVoulu = 0;
+				int idReponseCorrecte = 0; 
+				sql = "SELECT id_question FROM reponse WHERE id_reponse=?";	
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, idReponseUtilisateur.get(i));
+				res = prepStmt.executeQuery();
+				
+				while (res.next()) {
+					idQuestionVoulu = res.getInt("id_question");
+				}
+				
+				System.out.println(" - Recuperation id question reussi: " + idQuestionVoulu);
+				
+		    // recuperation id reponse correcte
+				sql = "SELECT id_reponse_correct FROM question WHERE id_question=?"; 
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, idQuestionVoulu);
+				res = prepStmt.executeQuery();
+				
+				while (res.next()) {
+					idReponseCorrecte = res.getInt("id_reponse_correct");
+				}
+				
+				System.out.println(" - Recuperation id reponse correcte reussi: "+ idReponseCorrecte);
+				
+			// comparaison reponse correcte et reponse utilisateur 
+				if (idReponseCorrecte == idReponseUtilisateur.get(i)) {
+					score++;
+				}
+			}// end for
+						
+		// update score
+		System.out.println(" - Mise a jour score.");
+			sql = "UPDATE parcours SET `score`=? WHERE id_parcours=?";
+				
+
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.setInt(1, score);
+			prepStmt.setInt(2, idParcours);
+			prepStmt.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		// Fermeture Connection
+		try {
+			if(res!=null) {	
+				res.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		jdbcDisconnect();
+				
+		return statut;
+	}// updateScore()
+	
 	
 	
 }// - ParcoursBDD
