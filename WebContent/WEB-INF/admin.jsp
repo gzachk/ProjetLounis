@@ -78,6 +78,15 @@
 			w.style.display = "none";
 		}
 	}
+	function showSuppressionQuestion() {
+		var w = document.getElementById('suppressionQuestion');
+
+		if (w.style.display === "none") {
+			w.style.display = "block";
+		} else {
+			w.style.display = "none";
+		}
+	}
 </script>
 
 <body style="font-family: courier">
@@ -150,7 +159,7 @@
 						<!-- 						</td> -->
 						<!-- 					</tr> -->
 						<tr>
-							<td colspan="2">
+							<td>
 								<form action="admin" method="post">
 									<input type="text" id="champCompetence" name="nouvelleCompetence" placeholder="Nouvelle competence" required/> 
 									<input type="submit" name="adminStg" value="Ajouter" style="background-color: lightblue"  />
@@ -162,13 +171,39 @@
 						<tr>
 							<td>
 								<form action="admin" method="post">
-									<input type="submit" name="adminStg" value="Get Quizz" style="background-color: lightblue" />
+									<input type="submit" name="adminStg" value="Get Quizz" style="background-color: lightblue; width:150px" />
 								</form>
 							</td>
+						</tr>
+						<tr>
 							<td>
 								<form action="admin" method="post">
-									<input type="submit" name="adminStg" value="Nouvelle Question" style="background-color: lightblue" />
+									<input type="submit" name="adminStg" value="Nouvelle Question" style="background-color: lightblue; width:150px" />
 								</form>
+							</td>
+						</tr>
+							<tr>
+								<td>
+								<form action="admin" method="post">
+									<input type="button" name="adminStg" onclick="showSuppressionQuestion()" value="Suppression Question" style="background-color: lightblue; width:150px"/>
+								</form>
+								</td>
+							</tr>
+							<tr id="suppressionQuestion" style="display: none;  padding:0 auto 0 auto;">
+								<td>
+									<form>
+										<select style="width: 150px";name="competencesChoisie" size="4" required>
+											<option value="" disabled="disabled">- Competence(s) -</option>
+											<c:forEach items="${tableQuizzAttr}" var="competenceName">
+												<option value="${competenceName.getIdCompetence()}">${competenceName.getIdCompetence()}</option>
+											</c:forEach>
+										</select>
+									</form>
+								</td>
+							</tr>
+							<tr>
+							<td>
+								<hr>
 							</td>
 						</tr>
 					</table>
@@ -204,7 +239,7 @@
 											<option value="${competenceName.getIdCompetence()}">${competenceName.getIdCompetence()}</option>
 										</c:forEach>
 								</select>
-									</td>
+								</td>
 							</tr>
 							<tr>
 								<td colspan="2">
@@ -238,5 +273,3 @@
 
 </body>
 </html>
-
-

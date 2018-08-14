@@ -116,6 +116,8 @@ public class QuizzController extends HttpServlet {
 		
 		request.setAttribute("dureeQuizz", dureeQuizz);
 		request.setAttribute("competence", request.getParameter("competenceQuizz"));
+		request.setAttribute("scoreQuizz", instanceParcoursBDD.getScoreQuizz(idParcoursQuizz));
+		request.setAttribute("nombreQuestionQuizz", nbreQuestions);
 		
 		
 		request.getRequestDispatcher("WEB-INF/questionnaire.jsp").forward(request, response);

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import bdd.ParcoursBDD;
+import model.Parcours;
 import model.Quizz;
 
 public class ParcoursController extends HttpServlet {
@@ -41,6 +42,7 @@ public class ParcoursController extends HttpServlet {
 			
 			ParcoursBDD instanceParcoursBDD = new ParcoursBDD();
 			ArrayList<Quizz> listeQuizz = new ArrayList<>();
+			ArrayList<Parcours> listeParcoursValider = new ArrayList<>();
 			
 			//Parcours pour utilisateur admin(if) et non admin(else)
 			if((boolean) session.getAttribute("sessionIsAdmin")) {
@@ -48,6 +50,7 @@ public class ParcoursController extends HttpServlet {
 			}else {
 				try {
 					listeQuizz = instanceParcoursBDD.getListQuizzUtilisateur(idUserConnecte);
+					listeParcoursValider = instanceParcoursBDD.recuperationStatistique(idUserConnecte);
 				} catch (Exception e) {
 					//Quizz emptyQuizz = new Quizz(-999, "En cours d'attribution");
 					//listeQuizz.add(emptyQuizz);
@@ -58,7 +61,13 @@ public class ParcoursController extends HttpServlet {
 			//Transfert liste a la jsp
 			if (listeQuizz.size() > 0 ) {
 				request.setAttribute("listeDesCompets", listeQuizz);
+				if (listeParcoursValider.size() > 0 ) {
+					request.setAttribute("listeDesCompetsValider", listeParcoursValider);
+				}
 			}else {
+				if (listeParcoursValider.size() > 0 ) {
+					request.setAttribute("listeDesCompetsValider", listeParcoursValider);
+				}
 				System.out.println("Retour de parcours vide.");
 			}
 			request.getRequestDispatcher("WEB-INF/parcours.jsp").forward(request, response);

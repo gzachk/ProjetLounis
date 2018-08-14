@@ -57,6 +57,7 @@
 		
 		<div id="content_div" align="center">
 			<p>Fin questionnaire de "${competence}"</p>
+			<p>Score: ${scoreQuizz}/${nombreQuestionQuizz}</p>
 			<p>Durée: ${dureeQuizz}</p>
 			<form action="parcours" method="get">
 			<input type="submit" value="Retour Parcours" />

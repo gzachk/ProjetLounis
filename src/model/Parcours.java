@@ -7,12 +7,14 @@ public class Parcours {
 	protected int score = 0;
 	protected boolean parcoursValider;
 	protected String dureeParcours; 
+	protected String sujetQuizz; 
+	protected int nombreQuestion;
 // ---------------------------------------------------------------------------------
 	public Parcours() {
 		super();
 	}
 	public Parcours(int idParcours, int idQuizz, int idUtilisateur, int score, boolean parcoursValider,
-			String dureeParcours) {
+			String dureeParcours, int nombreQuestion) {
 		super();
 		this.idParcours = idParcours;
 		this.idQuizz = idQuizz;
@@ -20,6 +22,7 @@ public class Parcours {
 		this.score = score;
 		this.parcoursValider = parcoursValider;
 		this.dureeParcours = dureeParcours;
+		this.nombreQuestion = nombreQuestion;
 	}
 	public Parcours(int idParcours, int idQuizz, int idUtilisateur, int score) {
 		super();
@@ -77,6 +80,19 @@ public class Parcours {
 	public void setDureeParcours(String dureeParcours) {
 		this.dureeParcours = dureeParcours;
 	}
+	public String getSujetQuizz() {
+		return sujetQuizz;
+	}
+	public void setSujetQuizz(String sujetQuizz) {
+		this.sujetQuizz = sujetQuizz;
+	}
+	public int getNombreQuestion() {
+		return nombreQuestion;
+	}
+	public void setNombreQuestion(int nombreQuestion) {
+		this.nombreQuestion = nombreQuestion;
+	}
+	
 	
 // ---------------------------------------------------------------------------------
 	

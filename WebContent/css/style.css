@@ -1,6 +1,8 @@
 @charset "UTF-8";
 
-
+:root{
+	--main-color: grey;
+}
 
 #main_div {
 	
@@ -42,11 +44,12 @@
 body {
 	/*background-color: gainsboro;*/
 	background-color: ghostwhite;
-	color: dimgrey;
+	color: var(--main-color);
 }
 
 hr {
-	border-color: lightgrey;
+	border: 0;
+	border-top: 1px solid var(--main-color);
 }
 
 hr.separator {
@@ -66,16 +69,27 @@ tbody.choixReponse {
 #listeStagiaire {
 /* 	border-collapse: collapse; */
 	display: inline-block;
-	border: 1px solid black;
+	border: 1px solid var(--main-color);
 	margin: 15px;
 	width: auto;
 }
 #listeQuizz {
 /* 	border-collapse: collapse; */
 	display: inline-block;
-	border: 1px solid black;
+	border: 1px solid var(--main-color);
 	margin: 15px;
 	width: auto;
+}
+#scoreUtilisateur table{
+/* 	border-collapse: collapse; */
+	display: inline-block;
+	border: 1px solid var(--main-color);
+	margin: 15px;
+	padding: 5px;
+	width: auto;
+}
+#scoreUtilisateur th{
+	min-width: 100px;
 }
 thead {
 	text-align: center;
@@ -102,4 +116,8 @@ textarea {
     min-height:200px;
     max-width:450px;
     max-height:200px;
+}
+/* ------------------------------------------------------------- */
+button, input[type=submit], input[type=reset], input[type=button] {
+	color: var(--main-color);
 }

@@ -456,32 +456,59 @@ public class ParcoursBDD {
 
 	public void deleteCompetence(ArrayList<String> competenceList) {
 		if (competenceList.size() > 0) {
-
+			ResultSet res = null;
 			jdbcConnect();
 
 			for (int i = 0; i < competenceList.size(); i++) {
-
+				System.out.println(" sujet a supprime: " + competenceList.get(i));
 				try {
-					String sql = "DELETE FROM quizz WHERE id_competence = '" + competenceList.get(i) + "'";
+					int idQuizz = 0;
+					// recuperation idQuizz
+					String sql = "SELECT id_quizz FROM quizz WHERE id_competence=?"; 
+					
+					prepStmt = conn.prepareStatement(sql);
+					prepStmt.setString(1, competenceList.get(i));
+					res = prepStmt.executeQuery();
+					
+					while (res.next()) {
+						idQuizz = res.getInt("id_quizz");
+					}
+					
+					// suppression question
+					sql = "DELETE FROM question WHERE id_quizz =?";
+					
+					prepStmt = conn.prepareStatement(sql);
+					prepStmt.setInt(1, idQuizz);
+					prepStmt.executeUpdate();
+					
+					// suppression quizz
+					sql = "DELETE FROM quizz WHERE id_competence =?";
 
 					prepStmt = conn.prepareStatement(sql);
-					prepStmt.executeUpdate(sql);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-
-				try {
-					String sql = "DELETE FROM competence WHERE sujet = '" + competenceList.get(i) + "'";
-					System.out.println(" sujet a supprime: " + competenceList.get(i));
+					prepStmt.setString(1, competenceList.get(i));
+					prepStmt.executeUpdate();
+				
+					// suppression competence
+					sql = "DELETE FROM competence WHERE sujet =?";
 
 					prepStmt = conn.prepareStatement(sql);
-					prepStmt.executeUpdate(sql);
+					prepStmt.setString(1, competenceList.get(i));
+					prepStmt.executeUpdate();
 					System.out.println(" - - > sujet supprime.");
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			} // end for
-
+			
+			// Fermeture Connection
+			try {
+				if(res!=null) {	
+					res.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
 			jdbcDisconnect();
 		}// end if
 	}// deleteCompetence()
@@ -768,7 +795,10 @@ public class ParcoursBDD {
 		String sql = "";
 		jdbcConnect();
 		System.out.println(" - Mise a jour parcours.");
-
+		
+		//ALTER TABLE `parcours` MODIFY `parcours_valider` TINYINT(1) DEFAULT 0 NOT NULL 
+		// -> IMPORTANT de lancer cette requete pour avoir la valeur de defaut voulu !
+		
 		try {
 			sql = "UPDATE parcours SET `duree_parcours`=?, `parcours_valider`=? WHERE id_parcours=?";
 				
@@ -795,6 +825,7 @@ public class ParcoursBDD {
 		boolean statut = false;
 		String sql = "";
 		int score = 0;
+		int nbQuestion = 0;
 		jdbcConnect();
 		
 		ResultSet res = null;
@@ -846,16 +877,18 @@ public class ParcoursBDD {
 				if (idReponseCorrecte == idReponseUtilisateur.get(i)) {
 					score++;
 				}
+				nbQuestion++;
 			}// end for
 						
 		// update score
 		System.out.println(" - Mise a jour score.");
-			sql = "UPDATE parcours SET `score`=? WHERE id_parcours=?";
+			sql = "UPDATE parcours SET `score`=?, `nombre_question`=? WHERE id_parcours=?";
 				
 
 			prepStmt = conn.prepareStatement(sql);
 			prepStmt.setInt(1, score);
-			prepStmt.setInt(2, idParcours);
+			prepStmt.setInt(2, nbQuestion);
+			prepStmt.setInt(3, idParcours);
 			prepStmt.executeUpdate();
 
 		} catch (SQLException e) {
@@ -875,6 +908,120 @@ public class ParcoursBDD {
 				
 		return statut;
 	}// updateScore()
+	
+	// -------------------------------------------------------------------------------
+
+	public int getScoreQuizz(int idParcours) {
+		jdbcConnect();
+
+		ResultSet res = null;
+		int score= 0;
+
+		String sql = "SELECT score FROM `parcours` WHERE id_parcours=?";
+
+		System.out.println("Recuperation du score!");
+		try {
+
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.setInt(1, idParcours);
+			res = prepStmt.executeQuery();
+
+			while (res.next()) {
+				score = res.getInt("SCORE");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		// Fermeture Connection
+		if (res == null) {
+			jdbcDisconnect();
+		} else {
+			try {
+				res.close();
+				// System.out.println("- ResultSet closed -");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			jdbcDisconnect();
+		}
+
+		return score;
+	}// getScoreQuizz();
+	
+	// -------------------------------------------------------------------------------
+	
+	public ArrayList<Parcours> recuperationStatistique(int idUtilisateurVoulu) {
+		jdbcConnect();
+		ResultSet res = null;
+
+		String sql ="SELECT * FROM parcours WHERE id_utilisateur=? AND parcours_valider=true";
+		
+		ArrayList<Parcours> listeParcoursValider = new ArrayList<>();
+
+		try {
+			int idParcours = 0;
+			int idQuizz = 0; 
+			int idUtilisateur = 0;
+			int score = 0;
+			int nombreQuestion = 0;
+			boolean parcoursValider = false;
+			String dureeParcours = "";
+			
+
+			prepStmt = conn.prepareStatement(sql);
+			prepStmt.setInt(1, idUtilisateurVoulu);
+			res = prepStmt.executeQuery();
+
+			while (res.next()) {
+				idParcours = res.getInt("id_parcours");
+				idQuizz = res.getInt("ID_QUIZZ");
+				idUtilisateur = res.getInt("id_utilisateur");
+				score = res.getInt("score");
+				nombreQuestion = res.getInt("nombre_question");
+				parcoursValider = res.getBoolean("parcours_valider");
+				dureeParcours = res.getString("duree_parcours");
+				
+				Parcours parcours = new Parcours(idParcours, idQuizz, idUtilisateur, score, parcoursValider, dureeParcours, nombreQuestion);
+				listeParcoursValider.add(parcours);
+			}
+			System.out.println(" - Recuperation des parcours valider reussi");
+			
+			// Recuperation intitule competence
+			for (int i = 0; i < listeParcoursValider.size(); i++) {
+				sql ="SELECT id_competence FROM quizz WHERE id_quizz=?";
+				
+				prepStmt = conn.prepareStatement(sql);
+				prepStmt.setInt(1, listeParcoursValider.get(i).getIdQuizz());
+				res = prepStmt.executeQuery();
+				while (res.next()) {
+					listeParcoursValider.get(i).setSujetQuizz(res.getString("id_competence"));
+					System.out.println(" - recuperation intitule competence"+ (i+1) + " - " + listeParcoursValider.get(i).getSujetQuizz());
+				}
+			}
+			System.out.println();
+			// Recuperation nombre de question dans competence
+			for (int i = 0; i < listeParcoursValider.size(); i++) {
+				listeParcoursValider.get(i).setNombreQuestion(getQuestion(listeParcoursValider.get(i).getIdQuizz()).size());
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		try {
+			if(res!=null) {	
+				res.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		jdbcDisconnect();
+		return listeParcoursValider;
+	}// recuperationStatistique()
+	
+	// -------------------------------------------------------------------------------
+	
 	
 	
 	

@@ -146,8 +146,11 @@ public class AdminController extends HttpServlet {
 			System.out.println(request.getParameter("adminStg"));
 			attribuerParcours(request, response);
 		}
+		if (request.getParameter("adminStg").equals("Suppression Question")) {
+			System.out.println(request.getParameter("adminStg"));
+			recuperationQuestion(request, response);
+		}
 		
-
 		System.out.println("End Admin(doPost) Controller\r");
 	}// doPost()
 		// -----------------------------------------------------------------------------------------------
@@ -517,4 +520,12 @@ public class AdminController extends HttpServlet {
 		request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request, response);
 	}// attribuerParcours()
 
+	// -----------------------------------------------------------------------------------------------
+
+		protected void recuperationQuestion(HttpServletRequest request, HttpServletResponse response)
+				throws ServletException, IOException {
+			request.setAttribute("displayParcours", "block");
+			
+			request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request, response);
+		}// recuperationQuestion()
 }// - AdminController

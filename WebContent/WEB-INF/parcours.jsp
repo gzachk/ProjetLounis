@@ -1,12 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Parcours</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css" />
 </head>
+
+<script type="text/javascript">
+function showScore() {
+		var x = document.getElementById('scoreUtilisateur');
+
+		if (x.style.display === "none") {
+			x.style.display = "block";
+		} else {
+			x.style.display = "none";
+		}
+	}
+</script>
+
+	
 <body style="font-family: courier">
 	<div id="main_div">
 		<div id="header_div">
@@ -56,7 +70,27 @@
 
 					</tbody>
 				</table>
-			
+			<button type="button" onclick="showScore()" style="width: 100px">Mon
+				Score</button>
+			<br>
+			<div id="scoreUtilisateur" style="display: none">
+				<table>
+					<thead>
+						<th>Competence</th>
+						<th>Score</th>
+						<th>Duree</th>
+					</thead>
+					<c:forEach items="${listeDesCompetsValider}"
+						var="varCompetenceValider">
+						<tr>
+							<td>${varCompetenceValider.getSujetQuizz()}</td>
+							<td>${varCompetenceValider.getScore()}/${varCompetenceValider.getNombreQuestion()}</td>
+							<td>${varCompetenceValider.getDureeParcours()}</td>
+						</tr>
+					</c:forEach>
+				</table>
+			</div>
+
 		</div>
 		
 		
