@@ -1020,7 +1020,32 @@ public class ParcoursBDD {
 		return listeParcoursValider;
 	}// recuperationStatistique()
 	
-	// -------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------
+
+	public void deleteQuestion(ArrayList<Integer> idQuestion) {
+		if (idQuestion.size() > 0) {
+			jdbcConnect();
+
+			for (int i = 0; i < idQuestion.size(); i++) {
+				System.out.println(" question a supprime: " + idQuestion.get(i));
+				try {
+					// suppression question
+					String sql = "DELETE FROM question WHERE id_question =?";
+
+					prepStmt = conn.prepareStatement(sql);
+					prepStmt.setInt(1, idQuestion.get(i));
+					prepStmt.executeUpdate();
+					
+					System.out.println(" - - > question supprime.");
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			} // end for
+			
+			jdbcDisconnect();
+		}// end if
+	}// deleteQuestion()
+
 	
 	
 	
