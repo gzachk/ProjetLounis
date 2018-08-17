@@ -29,6 +29,8 @@ public class AccueilController extends HttpServlet {
 			throws ServletException, IOException {
 
 		System.out.println("Begin Accueil(doGet) Controller");
+		
+		System.out.println(response.getStatus());
 
 		HttpSession session= request.getSession();
 		
