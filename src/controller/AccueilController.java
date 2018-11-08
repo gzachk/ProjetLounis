@@ -1,6 +1,8 @@
 package controller;
 
+//import java.io.File;
 import java.io.IOException;
+//import java.io.PrintStream;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -9,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.catalina.SessionEvent;
+//import org.apache.catalina.SessionEvent;
 
 import bdd.UtilisateurBDD;
 import bdd.UtilisateurBDDImpl;
@@ -27,6 +29,8 @@ public class AccueilController extends HttpServlet {
 			throws ServletException, IOException {
 
 		System.out.println("Begin Accueil(doGet) Controller");
+		
+		System.out.println(response.getStatus());
 
 		HttpSession session= request.getSession();
 		
@@ -37,6 +41,7 @@ public class AccueilController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+//		System.setOut(new PrintStream(new File("MonLog.txt")));
 		System.out.println("Begin Accueil(doPost) Controller");
 		
 		HttpSession session= request.getSession();
