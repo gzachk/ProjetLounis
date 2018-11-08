@@ -89,6 +89,9 @@ function showScore() {
 						</tr>
 					</c:forEach>
 				</table>
+				
+				
+<%-- 				<%@include file="graph.jsp"%> --%>
 			</div>
 
 		</div>

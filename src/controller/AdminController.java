@@ -59,6 +59,7 @@ public class AdminController extends HttpServlet {
 				request.setAttribute("displayUtilisateurs", "none");
 				request.setAttribute("displayParcours", "none");
 				request.setAttribute("displayAttributionParcours", "none");
+				request.setAttribute("displayRecup", "none");
 				request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request, response);
 			}else {
 				System.out.println(" - - - Redirection page parcours");
@@ -86,6 +87,7 @@ public class AdminController extends HttpServlet {
 		request.setAttribute("displayUtilisateurs", "none");
 		request.setAttribute("displayParcours", "none");
 		request.setAttribute("displayAttributionParcours", "none");
+		request.setAttribute("displayRecup", "none");
 		
 
 		//Recuperation liste utilisateurs valides non admin
@@ -146,9 +148,13 @@ public class AdminController extends HttpServlet {
 			System.out.println(request.getParameter("adminStg"));
 			attribuerParcours(request, response);
 		}
-		if (request.getParameter("adminStg").equals("Suppression Question")) {
+		if (request.getParameter("adminStg").equals("Recuperer Questions")) {
 			System.out.println(request.getParameter("adminStg"));
 			recuperationQuestion(request, response);
+		}
+		if (request.getParameter("adminStg").equals("SupprimerQuestion")) {
+			System.out.println(request.getParameter("adminStg"));
+			supprimerQuestion(request, response);
 		}
 		
 		System.out.println("End Admin(doPost) Controller\r");
@@ -412,7 +418,6 @@ public class AdminController extends HttpServlet {
 			System.out.println("method supprimerCompetence");
 			
 			ParcoursBDD listParcoursBDD = new ParcoursBDD();
-			ArrayList<Quizz> tableQuizz = new ArrayList<>();
 			
 			ArrayList<String> idCompetence= new ArrayList<>();
 			
@@ -524,8 +529,67 @@ public class AdminController extends HttpServlet {
 
 		protected void recuperationQuestion(HttpServletRequest request, HttpServletResponse response)
 				throws ServletException, IOException {
+			String erreur = "";
+			String retrouve = "";
+			
 			request.setAttribute("displayParcours", "block");
+			request.setAttribute("displayRecup", "flex");
+			
+			System.out.println(request.getParameter("competencesChoisie"));
+			ParcoursBDD instanceParcoursBDD = new ParcoursBDD();
+			
+			
+			ArrayList<Question> tableQuestion = instanceParcoursBDD.getQuizz(request.getParameter("competencesChoisie"));
+
+			if (tableQuestion.size() > 0) {
+				// placeholder
+				retrouve = "listeQuestions.jsp";
+				request.setAttribute("retrouve", retrouve);
+				request.setAttribute("tableQuestion", tableQuestion);
+
+			} else {
+				erreur = "<br/>Liste question vide.";
+				request.setAttribute("erreur", erreur);
+			}
 			
 			request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request, response);
 		}// recuperationQuestion()
+
+	// -----------------------------------------------------------------------------------------------
+
+				protected void supprimerQuestion(HttpServletRequest request, HttpServletResponse response)
+						throws ServletException, IOException {
+					String erreur = "";
+
+					request.setAttribute("displayParcours", "block");
+					request.setAttribute("displayRecup", "none");
+					
+					System.out.println("method supprimerQuestion");
+					
+					ParcoursBDD instanceParcoursBDD = new ParcoursBDD();
+					
+					ArrayList<Integer> idQuestion = new ArrayList<>();
+					
+					int nbrOfRows = Integer.parseInt(request.getParameter("nbrOfRowsInTable"));
+					System.out.println("\r nbre de matiere "+nbrOfRows+"\r");
+					
+					
+					// Recuperation Id question
+					for (int i = 0; i < nbrOfRows; i++) {
+						String testParse = request.getParameter("delQuestion"+i);
+						if(testParse != null) {
+							idQuestion.add(Integer.parseInt(request.getParameter("delQuestion"+i)));
+							System.out.println(request.getParameter("delQuestion"+i));
+						}
+					}
+					if(!idQuestion.isEmpty()) {
+						instanceParcoursBDD.deleteQuestion(idQuestion);
+						erreur = "<br/>Question(s) supprime";
+						
+					}else {
+						erreur = "<br/>Aucune question de supprime";
+						request.setAttribute("erreur", erreur);
+					}
+					request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request, response);
+				}// supprimerQuestion()
 }// - AdminController

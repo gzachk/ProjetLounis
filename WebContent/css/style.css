@@ -80,6 +80,13 @@ tbody.choixReponse {
 	margin: 15px;
 	width: auto;
 }
+#listeQuestion {
+/* 	border-collapse: collapse; */
+	display: inline-block;
+	border: 1px solid var(--main-color);
+	margin: 15px;
+	width: auto;
+}
 #scoreUtilisateur table{
 /* 	border-collapse: collapse; */
 	display: inline-block;

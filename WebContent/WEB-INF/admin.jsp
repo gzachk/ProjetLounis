@@ -82,7 +82,7 @@
 		var w = document.getElementById('suppressionQuestion');
 
 		if (w.style.display === "none") {
-			w.style.display = "block";
+			w.style.display = "flex";
 		} else {
 			w.style.display = "none";
 		}
@@ -152,12 +152,7 @@
 					
 				<div id="gestionParcours" style="display: ${displayParcours}">
 					<table>
-
-						<!-- 					<tr> -->
-						<!-- 						<td colspan="2">Gestion des Parcours -->
-						<!-- 							<hr> -->
-						<!-- 						</td> -->
-						<!-- 					</tr> -->
+						<tbody>
 						<tr>
 							<td>
 								<form action="admin" method="post">
@@ -189,15 +184,17 @@
 								</form>
 								</td>
 							</tr>
-							<tr id="suppressionQuestion" style="display: none;  padding:0 auto 0 auto;">
-								<td>
-									<form>
-										<select style="width: 150px";name="competencesChoisie" size="4" required>
-											<option value="" disabled="disabled">- Competence(s) -</option>
+							<tr id="suppressionQuestion" style="display: ${displayRecup}">
+								<td  style="width:100%">
+									<form action="admin" method="post">
+										<select style="width: 150px" name="competencesChoisie" size="1" required>
+											<option value="" selected disabled="disabled">- Competence(s) -</option>
 											<c:forEach items="${tableQuizzAttr}" var="competenceName">
 												<option value="${competenceName.getIdCompetence()}">${competenceName.getIdCompetence()}</option>
 											</c:forEach>
 										</select>
+										<br>
+										<input type="submit" name="adminStg" value="Recuperer Questions" style="background-color: Aquamarine ; width:150px" />
 									</form>
 								</td>
 							</tr>
@@ -206,6 +203,7 @@
 								<hr>
 							</td>
 						</tr>
+						</tbody>
 					</table>
 				</div>
 			</div>
